@@ -141,6 +141,23 @@ helm install unity-office . \
 | `ingress.hosts.collabora.host`| Hostname for Collabora Online | `collabora.workspace.com` |
 | `ingress.tls` | Cert-manager TLS secret list | *(configured)* |
 
+### 🌐 Why are there 2 Ingress Hosts (`web.host` vs `collabora.host`)?
+
+You will notice two separate hostnames in the ingress configuration:
+- **`office.yourdomain.com`**: Routes to `uoffice-web` (Next.js Dashboard on port 3000)
+- **`collabora.yourdomain.com`**: Routes to `uoffice` (Collabora Online engine on port 9980)
+
+Here is why this dual-domain architecture is the industry standard (used by Nextcloud, ownCloud, and Collabora):
+
+1. **Root Path Conflict Prevention**:
+   Collabora Online listens on fixed root-level paths (`/browser/*` for static assets, `/cool/*` for WebSocket sockets, and `/hosting/discovery` for WOPI discovery). Placing Collabora on the same hostname as Next.js would cause path conflicts with Next.js internal routes and static bundles.
+2. **Security & Iframe Sandboxing (Same-Origin Isolation)**:
+   The Next.js portal loads the document editor inside a sandboxed `<iframe>`. Hosting Collabora on a distinct subdomain ensures cross-origin isolation: untrusted document macros or scripts running inside LibreOfficeKit can never access your Next.js session cookies, localStorage, or auth tokens.
+3. **Specialized Ingress & WebSocket Profiles**:
+   Collabora uses long-lived bidirectional WebSocket streams (`wss://collabora...`) that require extended proxy timeouts (`3600s`) and disabled response buffering. In contrast, `office.yourdomain.com` handles standard stateless HTTP/REST traffic. Having separate hosts allows Traefik/NGINX to apply different middleware cleanly.
+4. **Shared Engine across Unity Workspace**:
+   Having a dedicated `collabora.yourdomain.com` allows both **Unity Office** (`office.yourdomain.com`) AND **UDrive** (`drive.yourdomain.com`) to embed the exact same Collabora instance seamlessly.
+
 ---
 
 ## 🔗 Co-existence with UDrive Helm Chart

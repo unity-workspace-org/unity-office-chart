@@ -22,6 +22,12 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "unity-office.fullname" . }}-sa
+      {{- end }}
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: uoffice
           image: "{{ .Values.uoffice.image.repository }}:{{ .Values.uoffice.image.tag }}"

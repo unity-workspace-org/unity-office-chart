@@ -1,43 +1,125 @@
 {{- if .Values.networkPolicy.enabled }}
+# 1. Network Policy for Web Portal (Next.js)
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "unity-office.fullname" . }}-netpol
+  name: {{ include "unity-office.fullname" . }}-web-netpol
   labels:
     {{- include "unity-office.labels" . | nindent 4 }}
+    app.kubernetes.io/component: web
 spec:
   podSelector:
     matchLabels:
       {{- include "unity-office.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: web
   policyTypes:
     - Ingress
     - Egress
   ingress:
-    - from:
-        - namespaceSelector: {}
-      ports:
+    # Accept HTTP traffic on port 3000
+    - ports:
         - protocol: TCP
           port: 3000
-        - protocol: TCP
-          port: 9980
-        - protocol: TCP
-          port: 8055
   egress:
-    - to:
-        - namespaceSelector: {}
-      ports:
+    # Allow DNS resolution
+    - ports:
         - protocol: TCP
           port: 53
         - protocol: UDP
           port: 53
+    # Allow communication to WOPI bridge, Collabora, and UDrive
+    - to:
+        - podSelector:
+            matchLabels:
+              {{- include "unity-office.selectorLabels" . | nindent 14 }}
+      ports:
+        - protocol: TCP
+          port: 8055
+        - protocol: TCP
+          port: 9980
+    - ports:
+        - protocol: TCP
+          port: 9200
         - protocol: TCP
           port: 443
+---
+# 2. Network Policy for Collabora Online (uoffice)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "unity-office.fullname" . }}-uoffice-netpol
+  labels:
+    {{- include "unity-office.labels" . | nindent 4 }}
+    app.kubernetes.io/component: uoffice
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "unity-office.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: uoffice
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - ports:
         - protocol: TCP
-          port: 80
+          port: 9980
+  egress:
+    - ports:
+        - protocol: TCP
+          port: 53
+        - protocol: UDP
+          port: 53
+    - to:
+        - podSelector:
+            matchLabels:
+              {{- include "unity-office.selectorLabels" . | nindent 14 }}
+              app.kubernetes.io/component: wopi
+      ports:
+        - protocol: TCP
+          port: 8055
+    - ports:
+        - protocol: TCP
+          port: 9200
+        - protocol: TCP
+          port: 443
+---
+# 3. Hardened Internal Network Policy for WOPI Bridge (Zero External Access)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "unity-office.fullname" . }}-wopi-netpol
+  labels:
+    {{- include "unity-office.labels" . | nindent 4 }}
+    app.kubernetes.io/component: wopi
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "unity-office.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: wopi
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Strictly allow ONLY Web and Collabora pods inside the chart to reach WOPI
+    - from:
+        - podSelector:
+            matchLabels:
+              {{- include "unity-office.selectorLabels" . | nindent 14 }}
+      ports:
+        - protocol: TCP
+          port: 8055
+  egress:
+    - ports:
+        - protocol: TCP
+          port: 53
+        - protocol: UDP
+          port: 53
+    # Allow WOPI to talk to UDrive storage and Collabora converter
+    - ports:
         - protocol: TCP
           port: 9200
         - protocol: TCP
           port: 9980
         - protocol: TCP
-          port: 8055
+          port: 443
 {{- end }}

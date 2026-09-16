@@ -160,6 +160,28 @@ Here is why this dual-domain architecture is the industry standard (used by Next
 
 ---
 
+## 🔒 Security Architecture & Hardening
+
+This Helm chart implements enterprise defense-in-depth security standards:
+
+### 1. Zero-Trust Network Isolation (NetworkPolicy)
+- **Isolated Storage Bridge**: The `uoffice-wopi` pod is never exposed to the public Ingress. It strictly accepts connections originating only from `uoffice-web` and `uoffice` within the cluster.
+- **Controlled Egress**: Pods can only communicate with required cluster services (DNS port 53, UDrive port 9200, and Collabora port 9980).
+
+### 2. Pod Security Standards (PSS Restricted)
+- **Non-Root Execution**: `uoffice-web` and `uoffice-wopi` run as unprivileged non-root users (`1001:1001` and `1000:1000`).
+- **Privilege Escalation Blocked**: `allowPrivilegeEscalation: false`.
+- **Linux Capabilities Dropped**: All capabilities dropped (`drop: ["ALL"]`) except strictly bounded capabilities required by sandboxes.
+- **Seccomp Profile**: Enforces `RuntimeDefault` seccomp profiles across all pods.
+
+### 3. Iframe & Clickjacking Defense (CORS / CSP)
+- Collabora enforces strict origin validation using `aliasgroup1`. Only explicitly allowed domains (`office.domain.com` and `drive.domain.com`) can frame the document editor.
+- Ingress applies HTTP security headers: `HSTS` (`max-age=31536000`), `X-Content-Type-Options: nosniff`, `X-XSS-Protection`, and `Referrer-Policy`.
+
+### 4. Enterprise Secret Injection
+- **External Secrets & HashiCorp Vault**: Store credentials outside Helm using `existingSecret` or inject dynamically via HashiCorp Vault Agent sidecar integration.
+
+
 ## 🔗 Co-existence with UDrive Helm Chart
 
 When deploying in the same Kubernetes cluster as `udrive`:

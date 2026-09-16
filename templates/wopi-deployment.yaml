@@ -22,10 +22,25 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "unity-office.fullname" . }}-sa
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: wopi
           image: "{{ .Values.wopi.image.repository }}:{{ .Values.wopi.image.tag }}"
           imagePullPolicy: {{ .Values.wopi.image.pullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - name: wopi
               containerPort: {{ .Values.wopi.service.port }}

@@ -1,0 +1,18 @@
+{{- if and .Values.wopi.enabled .Values.wopi.persistence.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "unity-office.fullname" . }}-wopi-drafts
+  labels:
+    {{- include "unity-office.labels" . | nindent 4 }}
+    app.kubernetes.io/component: wopi
+spec:
+  accessModes:
+    - {{ .Values.wopi.persistence.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.wopi.persistence.size | quote }}
+  {{- if .Values.wopi.persistence.storageClass }}
+  storageClassName: {{ .Values.wopi.persistence.storageClass | quote }}
+  {{- end }}
+{{- end }}

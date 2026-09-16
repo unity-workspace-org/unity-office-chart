@@ -1,0 +1,69 @@
+{{- if .Values.wopi.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "unity-office.fullname" . }}-wopi
+  labels:
+    {{- include "unity-office.labels" . | nindent 4 }}
+    app.kubernetes.io/component: wopi
+spec:
+  replicas: {{ .Values.wopi.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "unity-office.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: wopi
+  template:
+    metadata:
+      labels:
+        {{- include "unity-office.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: wopi
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: wopi
+          image: "{{ .Values.wopi.image.repository }}:{{ .Values.wopi.image.tag }}"
+          imagePullPolicy: {{ .Values.wopi.image.pullPolicy }}
+          ports:
+            - name: wopi
+              containerPort: {{ .Values.wopi.service.port }}
+              protocol: TCP
+          env:
+            - name: WOPI_HOST
+              value: "0.0.0.0"
+            - name: WOPI_PORT
+              value: "{{ .Values.wopi.service.port }}"
+            - name: UDRIVE_URL
+              value: {{ .Values.udrive.url | quote }}
+            - name: COLLABORA_CONVERT_URL
+              value: "http://{{ include "unity-office.fullname" . }}-uoffice:9980/cool/convert-to/png"
+            - name: WOPI_ALLOWED_ORIGINS
+              value: "http://{{ include "unity-office.fullname" . }}-web:3000,http://{{ include "unity-office.fullname" . }}-uoffice:9980{{ if .Values.ingress.enabled }},https://{{ .Values.ingress.hosts.web.host }},https://{{ .Values.ingress.hosts.collabora.host }}{{ end }}"
+          volumeMounts:
+            - name: drafts
+              mountPath: /root/Library/Application Support/com.unityworkspace.word/drafts
+          resources:
+            {{- toYaml .Values.wopi.resources | nindent 12 }}
+      volumes:
+        - name: drafts
+          {{- if .Values.wopi.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "unity-office.fullname" . }}-wopi-drafts
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+      {{- with .Values.wopi.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.wopi.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.wopi.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

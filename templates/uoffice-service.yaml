@@ -1,0 +1,19 @@
+{{- if .Values.uoffice.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "unity-office.fullname" . }}-uoffice
+  labels:
+    {{- include "unity-office.labels" . | nindent 4 }}
+    app.kubernetes.io/component: uoffice
+spec:
+  type: {{ .Values.uoffice.service.type }}
+  ports:
+    - port: {{ .Values.uoffice.service.port }}
+      targetPort: collabora
+      protocol: TCP
+      name: collabora
+  selector:
+    {{- include "unity-office.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: uoffice
+{{- end }}

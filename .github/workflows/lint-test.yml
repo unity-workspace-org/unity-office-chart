@@ -1,0 +1,34 @@
+name: Lint and Test Chart
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.0
+
+      - name: Lint Chart
+        run: |
+          helm lint .
+
+      - name: Test Template (Default Values)
+        run: |
+          helm template test-release . > /dev/null
+
+      - name: Test Template (Production Values)
+        run: |
+          helm template prod-release . -f values-prod.yaml > /dev/null

@@ -1,0 +1,19 @@
+{{- if .Values.wopi.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "unity-office.fullname" . }}-wopi
+  labels:
+    {{- include "unity-office.labels" . | nindent 4 }}
+    app.kubernetes.io/component: wopi
+spec:
+  type: {{ .Values.wopi.service.type }}
+  ports:
+    - port: {{ .Values.wopi.service.port }}
+      targetPort: wopi
+      protocol: TCP
+      name: wopi
+  selector:
+    {{- include "unity-office.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: wopi
+{{- end }}

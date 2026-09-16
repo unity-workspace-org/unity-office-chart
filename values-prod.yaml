@@ -1,0 +1,60 @@
+# Production values override for Unity Office
+global:
+  domain: workspace.com
+
+web:
+  replicaCount: 3
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 15
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 75
+
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 2
+
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2048Mi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
+uoffice:
+  replicaCount: 2
+  resources:
+    limits:
+      cpu: 4000m
+      memory: 4096Mi
+    requests:
+      cpu: 500m
+      memory: 1024Mi
+
+udrive:
+  url: "https://drive.workspace.com"
+  insecureSkipVerify: false
+  storageDir: "/"
+  auth:
+    existingSecret: "udrive-credentials"
+    usernameKey: "username"
+    passwordKey: "password"
+
+ingress:
+  enabled: true
+  className: "traefik"
+  hosts:
+    web:
+      host: "office.workspace.com"
+    collabora:
+      host: "collabora.workspace.com"
+  tls:
+    - secretName: unity-office-prod-tls
+      hosts:
+        - "office.workspace.com"
+        - "collabora.workspace.com"
+
+networkPolicy:
+  enabled: true

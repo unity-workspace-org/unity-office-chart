@@ -1,0 +1,51 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "unity-office.fullname" . }}
+  labels:
+    {{- include "unity-office.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.hosts.web.host | quote }}
+      http:
+        paths:
+          {{- range .Values.ingress.hosts.web.paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ include "unity-office.fullname" $ }}-web
+                port:
+                  number: {{ $.Values.web.service.port }}
+          {{- end }}
+    - host: {{ .Values.ingress.hosts.collabora.host | quote }}
+      http:
+        paths:
+          {{- range .Values.ingress.hosts.collabora.paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ include "unity-office.fullname" $ }}-uoffice
+                port:
+                  number: {{ $.Values.uoffice.service.port }}
+          {{- end }}
+{{- end }}

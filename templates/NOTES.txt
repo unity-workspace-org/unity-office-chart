@@ -1,0 +1,28 @@
+================================================================================
+ Unity Office Suite has been deployed!
+================================================================================
+
+Release Name: {{ .Release.Name }}
+Namespace:    {{ .Release.Namespace }}
+
+1. Accessing Unity Office:
+{{- if .Values.ingress.enabled }}
+   - Web Dashboard: https://{{ .Values.ingress.hosts.web.host }}
+   - Collabora Engine: https://{{ .Values.ingress.hosts.collabora.host }}
+{{- else }}
+   - Port-forward Web:
+     kubectl port-forward svc/{{ include "unity-office.fullname" . }}-web 3000:{{ .Values.web.service.port }} -n {{ .Release.Namespace }}
+     Then open: http://localhost:3000
+
+   - Port-forward Collabora:
+     kubectl port-forward svc/{{ include "unity-office.fullname" . }}-uoffice 9980:{{ .Values.uoffice.service.port }} -n {{ .Release.Namespace }}
+{{- end }}
+
+2. UDrive Cloud Storage Integration:
+   - Target UDrive URL: {{ .Values.udrive.url }}
+   - Storage Directory: {{ .Values.udrive.storageDir }}
+   - UDrive Web Link:   {{ .Values.udrive.webUrl }}
+
+3. Check Pod Status:
+   kubectl get pods -l app.kubernetes.io/instance={{ .Release.Name }} -n {{ .Release.Namespace }}
+================================================================================

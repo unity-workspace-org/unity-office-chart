@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "unity-office.fullname" . }}-config
+  labels:
+    {{- include "unity-office.labels" . | nindent 4 }}
+data:
+  PORT: "3000"
+  HOSTNAME: "0.0.0.0"
+  NEXT_PUBLIC_COLLABORA_URL: {{ if .Values.ingress.enabled }}https://{{ .Values.ingress.hosts.collabora.host }}{{ else }}http://{{ include "unity-office.fullname" . }}-uoffice:9980{{ end }}
+  NEXT_PUBLIC_WOPI_INTERNAL_URL: "http://{{ include "unity-office.fullname" . }}-wopi:8055"
+  UDRIVE_URL: {{ .Values.udrive.url | quote }}
+  UDRIVE_STORAGE_DIR: {{ .Values.udrive.storageDir | quote }}
+  UDRIVE_INSECURE_SKIP_VERIFY: {{ .Values.udrive.insecureSkipVerify | quote }}
+  NEXT_PUBLIC_UDRIVE_URL: {{ .Values.udrive.webUrl | quote }}

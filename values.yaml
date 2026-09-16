@@ -1,0 +1,234 @@
+# ==============================================================================
+# Unity Office — Production Helm Values Configuration
+# ==============================================================================
+
+# Global configuration shared across components
+global:
+  domain: workspace.com
+  imagePullSecrets:
+    - name: ghcr-secret
+
+# Naming overrides
+nameOverride: ""
+fullnameOverride: ""
+
+# ServiceAccount configuration
+serviceAccount:
+  create: true
+  name: "unity-office"
+  annotations: {}
+
+# ------------------------------------------------------------------------------
+# 1. Unity Office Web Portal (Next.js Dashboard)
+# ------------------------------------------------------------------------------
+web:
+  enabled: true
+  replicaCount: 2
+
+  image:
+    repository: ghcr.io/unity-workspace-org/uoffice-web
+    pullPolicy: IfNotPresent
+    tag: "v1.1.5"
+
+  service:
+    type: ClusterIP
+    port: 3000
+
+  # Horizontal Pod Autoscaling (HPA)
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 75
+    targetMemoryUtilizationPercentage: 80
+
+  # Pod Disruption Budget
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+    runAsGroup: 1001
+    fsGroup: 1001
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    capabilities:
+      drop:
+        - ALL
+
+  nodeSelector: {}
+  tolerations: []
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/component
+                  operator: In
+                  values:
+                    - web
+            topologyKey: kubernetes.io/hostname
+
+# ------------------------------------------------------------------------------
+# 2. Collabora Online Rendering Engine (uoffice)
+# ------------------------------------------------------------------------------
+uoffice:
+  enabled: true
+  replicaCount: 1
+
+  image:
+    repository: ghcr.io/unity-workspace-org/uoffice
+    pullPolicy: IfNotPresent
+    tag: "latest"
+
+  service:
+    type: ClusterIP
+    port: 9980
+
+  env:
+    dontGenSslCert: "1"
+    extraParams: "--o:ssl.enable=false --o:ssl.termination=true --o:welcome.enable=false"
+    # Additional domains allowed to frame Collabora (comma-separated)
+    aliasgroup1: ""
+
+  securityContext:
+    capabilities:
+      add:
+        - MKNOD
+        - SYS_ADMIN
+
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2048Mi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# ------------------------------------------------------------------------------
+# 3. WOPI Storage Bridge
+# ------------------------------------------------------------------------------
+wopi:
+  enabled: true
+  replicaCount: 1
+
+  image:
+    repository: ghcr.io/unity-workspace-org/uoffice-wopi
+    pullPolicy: IfNotPresent
+    tag: "latest"
+
+  service:
+    type: ClusterIP
+    port: 8055
+
+  # Persistent storage for temporary document drafts
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    storageClass: ""
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# ------------------------------------------------------------------------------
+# 4. UDrive (ownCloud Infinite Scale) Storage Integration
+# ------------------------------------------------------------------------------
+udrive:
+  # Base URL of your UDrive deployment (in-cluster or external)
+  url: "https://drive.workspace.com"
+
+  # Directory inside UDrive where Office documents are stored
+  storageDir: "/"
+
+  # Set true if UDrive uses self-signed TLS certificates
+  insecureSkipVerify: false
+
+  # Web URL to display in 9-dot App Launcher
+  webUrl: "https://drive.workspace.com"
+
+  # Service Account credentials for WebDAV sync
+  auth:
+    username: "admin"
+    password: "admin"
+    # Or reference an existing Kubernetes secret:
+    existingSecret: ""
+    usernameKey: "username"
+    passwordKey: "password"
+
+# ------------------------------------------------------------------------------
+# 5. HashiCorp Vault Agent Integration (Optional)
+# ------------------------------------------------------------------------------
+vault:
+  enabled: false
+  address: "https://vault.internal:8200"
+  role: "unity-office-role"
+  secretPath: "secret/data/unity-office"
+  tlsSkipVerify: true
+
+# ------------------------------------------------------------------------------
+# 6. Ingress Configuration
+# ------------------------------------------------------------------------------
+ingress:
+  enabled: true
+  className: "traefik"
+
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    # NGINX annotations (if using ingress-nginx)
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/websocket-services: "uoffice"
+
+  hosts:
+    web:
+      host: office.workspace.com
+      paths:
+        - path: /
+          pathType: Prefix
+    collabora:
+      host: collabora.workspace.com
+      paths:
+        - path: /
+          pathType: Prefix
+
+  tls:
+    - secretName: unity-office-tls
+      hosts:
+        - office.workspace.com
+        - collabora.workspace.com
+
+# ------------------------------------------------------------------------------
+# 7. Network Policy (Optional Zero-Trust Security)
+# ------------------------------------------------------------------------------
+networkPolicy:
+  enabled: false

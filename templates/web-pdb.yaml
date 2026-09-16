@@ -1,0 +1,15 @@
+{{- if and .Values.web.enabled .Values.web.podDisruptionBudget.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "unity-office.fullname" . }}-web-pdb
+  labels:
+    {{- include "unity-office.labels" . | nindent 4 }}
+    app.kubernetes.io/component: web
+spec:
+  minAvailable: {{ .Values.web.podDisruptionBudget.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "unity-office.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: web
+{{- end }}

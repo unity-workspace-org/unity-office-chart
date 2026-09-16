@@ -1,0 +1,23 @@
+apiVersion: v2
+name: unity-office
+description: Enterprise production Helm chart for Unity Office Document Suite (Collabora Online, WOPI Bridge, Web Portal & UDrive Integration)
+type: application
+version: 0.1.0
+appVersion: "1.1.5"
+keywords:
+  - office
+  - documents
+  - collabora
+  - wopi
+  - udrive
+  - storage
+  - kubernetes
+  - unity-workspace
+home: https://github.com/unity-workspace-org
+sources:
+  - https://github.com/unity-workspace-org/unity-office-web
+  - https://github.com/unity-workspace-org/unity-office-server
+maintainers:
+  - name: Unity Workspace Team
+    email: dev@unity-workspace.org
+icon: https://raw.githubusercontent.com/unity-workspace-org/unity-office-web/main/ui/public/favicon.ico

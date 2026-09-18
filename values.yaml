@@ -223,7 +223,7 @@ ingress:
         - path: /
           pathType: Prefix
     collabora:
-      host: collabora.workspace.com
+      host: uoffice.workspace.com
       paths:
         - path: /
           pathType: Prefix
@@ -232,7 +232,7 @@ ingress:
     - secretName: unity-office-tls
       hosts:
         - office.workspace.com
-        - collabora.workspace.com
+        - uoffice.workspace.com
 
 # ------------------------------------------------------------------------------
 # 7. Network Policy (Optional Zero-Trust Security)

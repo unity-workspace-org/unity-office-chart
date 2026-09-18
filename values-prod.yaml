@@ -1,6 +1,6 @@
 # Production values override for Unity Office
 global:
-  domain: workspace.com
+  domain: unity-workspace.com
 
 web:
   replicaCount: 3
@@ -34,7 +34,7 @@ uoffice:
       memory: 1024Mi
 
 udrive:
-  url: "https://drive.workspace.com"
+  url: "https://drive.unity-workspace.com"
   insecureSkipVerify: false
   storageDir: "/"
   auth:
@@ -47,14 +47,14 @@ ingress:
   className: "traefik"
   hosts:
     web:
-      host: "office.workspace.com"
+      host: "office.unity-workspace.com"
     collabora:
-      host: "collabora.workspace.com"
+      host: "uoffice.unity-workspace.com"
   tls:
     - secretName: unity-office-prod-tls
       hosts:
-        - "office.workspace.com"
-        - "collabora.workspace.com"
+        - "office.unity-workspace.com"
+        - "uoffice.unity-workspace.com"
 
 networkPolicy:
   enabled: true

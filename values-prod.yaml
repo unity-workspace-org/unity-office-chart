@@ -45,16 +45,21 @@ udrive:
 ingress:
   enabled: true
   className: "traefik"
+  annotations:
+    cert-manager.io/cluster-issuer: null
+    traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
   hosts:
     web:
       host: "office.unity-workspace.com"
+      paths:
+        - path: /
+          pathType: Prefix
     collabora:
       host: "uoffice.unity-workspace.com"
-  tls:
-    - secretName: unity-office-prod-tls
-      hosts:
-        - "office.unity-workspace.com"
-        - "uoffice.unity-workspace.com"
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
 
 networkPolicy:
   enabled: true

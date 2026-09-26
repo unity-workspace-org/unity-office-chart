@@ -42,7 +42,7 @@ spec:
             - name: extra_params
               value: {{ .Values.uoffice.env.extraParams | quote }}
             - name: aliasgroup1
-              value: "{{ .Values.uoffice.env.aliasgroup1 }},http://{{ include "unity-office.fullname" . }}-wopi:8055,http://{{ include "unity-office.fullname" . }}-web:3000{{ if .Values.ingress.enabled }},https://{{ .Values.ingress.hosts.web.host }},https://{{ .Values.ingress.hosts.collabora.host }}{{ end }}"
+              value: "{{ if .Values.uoffice.env.aliasgroup1 }}{{ .Values.uoffice.env.aliasgroup1 }},{{ end }}http://{{ include "unity-office.fullname" . }}-wopi:8055,http://{{ include "unity-office.fullname" . }}-web:3000{{ if .Values.ingress.enabled }},https://{{ .Values.ingress.hosts.web.host }},https://{{ .Values.ingress.hosts.collabora.host }}{{ end }}"
           {{- with .Values.uoffice.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}

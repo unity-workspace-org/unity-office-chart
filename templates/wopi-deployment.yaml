@@ -27,9 +27,9 @@ spec:
       {{- end }}
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
         seccompProfile:
           type: RuntimeDefault
       containers:
@@ -52,13 +52,17 @@ spec:
               value: "{{ .Values.wopi.service.port }}"
             - name: UDRIVE_URL
               value: {{ .Values.udrive.url | quote }}
+            - name: UDRIVE_USERNAME
+              value: {{ .Values.udrive.auth.username | quote }}
+            - name: UDRIVE_PASSWORD
+              value: {{ .Values.udrive.auth.password | quote }}
             - name: COLLABORA_CONVERT_URL
               value: "http://{{ include "unity-office.fullname" . }}-uoffice:9980/cool/convert-to/png"
             - name: WOPI_ALLOWED_ORIGINS
               value: "http://{{ include "unity-office.fullname" . }}-web:3000,http://{{ include "unity-office.fullname" . }}-uoffice:9980{{ if .Values.ingress.enabled }},https://{{ .Values.ingress.hosts.web.host }},https://{{ .Values.ingress.hosts.collabora.host }}{{ end }}"
           volumeMounts:
             - name: drafts
-              mountPath: /root/Library/Application Support/com.unityworkspace.word/drafts
+              mountPath: /home/appuser/drafts
           resources:
             {{- toYaml .Values.wopi.resources | nindent 12 }}
       volumes:

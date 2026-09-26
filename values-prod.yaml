@@ -3,6 +3,8 @@ global:
   domain: unity-workspace.com
 
 web:
+  image:
+    tag: "v1.1.17"
   replicaCount: 3
   autoscaling:
     enabled: true

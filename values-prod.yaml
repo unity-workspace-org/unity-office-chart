@@ -33,6 +33,12 @@ uoffice:
       cpu: 500m
       memory: 1024Mi
 
+wopi:
+  image:
+    tag: "v2.0.0"
+  persistence:
+    enabled: false
+
 udrive:
   url: "https://drive.unity-workspace.com"
   insecureSkipVerify: false

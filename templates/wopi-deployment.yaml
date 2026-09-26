@@ -52,10 +52,23 @@ spec:
               value: "{{ .Values.wopi.service.port }}"
             - name: UDRIVE_URL
               value: {{ .Values.udrive.url | quote }}
+            {{- if .Values.udrive.auth.existingSecret }}
+            - name: UDRIVE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.udrive.auth.existingSecret }}
+                  key: {{ .Values.udrive.auth.usernameKey | default "username" }}
+            - name: UDRIVE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.udrive.auth.existingSecret }}
+                  key: {{ .Values.udrive.auth.passwordKey | default "password" }}
+            {{- else }}
             - name: UDRIVE_USERNAME
               value: {{ .Values.udrive.auth.username | quote }}
             - name: UDRIVE_PASSWORD
               value: {{ .Values.udrive.auth.password | quote }}
+            {{- end }}
             - name: COLLABORA_CONVERT_URL
               value: "http://{{ include "unity-office.fullname" . }}-uoffice:9980/cool/convert-to/png"
             - name: WOPI_ALLOWED_ORIGINS

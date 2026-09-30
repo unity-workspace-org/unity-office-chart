@@ -27,6 +27,13 @@ spec:
     - host: {{ .Values.ingress.hosts.web.host | quote }}
       http:
         paths:
+          - path: /ws
+            pathType: Prefix
+            backend:
+              service:
+                name: unity-realtime
+                port:
+                  number: 8088
           {{- range .Values.ingress.hosts.web.paths }}
           - path: {{ .path }}
             pathType: {{ .pathType }}

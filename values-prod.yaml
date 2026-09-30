@@ -4,7 +4,7 @@ global:
 
 web:
   image:
-    tag: "v1.1.20"
+    tag: "v1.1.21"
   replicaCount: 3
   autoscaling:
     enabled: true
@@ -37,7 +37,7 @@ uoffice:
 
 wopi:
   image:
-    tag: "v2.0.14"
+    tag: "v2.0.15"
   persistence:
     enabled: true
     storageClass: "longhorn"

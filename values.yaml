@@ -101,7 +101,7 @@ uoffice:
 
   env:
     dontGenSslCert: "1"
-    extraParams: "--o:ssl.enable=false --o:ssl.termination=true --o:welcome.enable=false"
+    extraParams: "--o:ssl.enable=false --o:ssl.termination=true --o:welcome.enable=false --o:remote_font_config.url=https://office.unity-workspace.com/api/fonts.json"
     # Additional domains allowed to frame Collabora (comma-separated)
     aliasgroup1: ""
 

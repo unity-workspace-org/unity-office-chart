@@ -27,7 +27,7 @@ spec:
           port: 53
         - protocol: UDP
           port: 53
-    # Allow communication to WOPI bridge, Collabora, and UDrive
+    # Allow communication to WOPI bridge, Collabora, UDrive (same Helm chart pods)
     - to:
         - podSelector:
             matchLabels:
@@ -37,6 +37,14 @@ spec:
           port: 8055
         - protocol: TCP
           port: 9980
+    # Allow communication to unity-realtime (separate deployment, port 8088)
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: unity-realtime
+      ports:
+        - protocol: TCP
+          port: 8088
     - ports:
         - protocol: TCP
           port: 9200

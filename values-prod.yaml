@@ -4,7 +4,7 @@ global:
 
 web:
   image:
-    tag: "v1.1.17"
+    tag: "v1.1.20"
   replicaCount: 3
   autoscaling:
     enabled: true
@@ -26,7 +26,7 @@ web:
       memory: 512Mi
 
 uoffice:
-  replicaCount: 2
+  replicaCount: 1
   resources:
     limits:
       cpu: 4000m
@@ -37,7 +37,7 @@ uoffice:
 
 wopi:
   image:
-    tag: "v2.0.0"
+    tag: "v2.0.14"
   persistence:
     enabled: false
 

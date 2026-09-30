@@ -74,15 +74,19 @@ spec:
             - name: WOPI_ALLOWED_ORIGINS
               value: "http://{{ include "unity-office.fullname" . }}-web:3000,http://{{ include "unity-office.fullname" . }}-uoffice:9980{{ if .Values.ingress.enabled }},https://{{ .Values.ingress.hosts.web.host }},https://{{ .Values.ingress.hosts.collabora.host }}{{ end }}"
           volumeMounts:
-            - name: drafts
+            - name: data
               mountPath: /home/appuser/drafts
+              subPath: drafts
+            - name: data
+              mountPath: /home/appuser/fonts
+              subPath: fonts
           resources:
             {{- toYaml .Values.wopi.resources | nindent 12 }}
       volumes:
-        - name: drafts
+        - name: data
           {{- if .Values.wopi.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: {{ include "unity-office.fullname" . }}-wopi-drafts
+            claimName: {{ include "unity-office.fullname" . }}-wopi-data
           {{- else }}
           emptyDir: {}
           {{- end }}

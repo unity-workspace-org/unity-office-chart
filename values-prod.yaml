@@ -39,7 +39,9 @@ wopi:
   image:
     tag: "v2.0.14"
   persistence:
-    enabled: false
+    enabled: true
+    storageClass: "longhorn"
+    size: 5Gi
 
 udrive:
   url: "https://drive.unity-workspace.com"

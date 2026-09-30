@@ -237,3 +237,11 @@ ingress:
 # ------------------------------------------------------------------------------
 networkPolicy:
   enabled: false
+
+# ------------------------------------------------------------------------------
+# 8. Unity Realtime Service
+# ------------------------------------------------------------------------------
+realtime:
+  # Set to true to expose the /ws path in the ingress, routing WebSocket and
+  # HTTP publish requests directly to the unity-realtime ClusterIP service.
+  enabled: true

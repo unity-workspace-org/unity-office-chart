@@ -101,7 +101,9 @@ uoffice:
 
   env:
     dontGenSslCert: "1"
-    extraParams: "--o:ssl.enable=false --o:ssl.termination=true --o:welcome.enable=false --o:num_prespawn_children=1 --o:remote_font_config.url=https://office.unity-workspace.com/api/fonts.json"
+    # NOTE: num_prespawn_children and remote_font_config.url are set via args: in the deployment template.
+    # Only put params here that are NOT in args:.
+    extraParams: "--o:ssl.enable=false --o:ssl.termination=true --o:welcome.enable=false --o:server_name=uoffice.unity-workspace.com --o:net.proto=IPv4 --o:forkit_timeout_secs=60 --o:per_document.limit_load_secs=60"
     # Additional domains allowed to frame Collabora (comma-separated)
     aliasgroup1: ""
 

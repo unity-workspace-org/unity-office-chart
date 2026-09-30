@@ -4,7 +4,7 @@ global:
 
 web:
   image:
-    tag: "v1.1.31"
+    tag: "v1.1.32"
     pullPolicy: Always
   replicaCount: 3
   autoscaling:
@@ -38,7 +38,7 @@ uoffice:
 
 wopi:
   image:
-    tag: "v2.0.15"
+    tag: "v2.0.16"
   persistence:
     enabled: true
     storageClass: "longhorn"

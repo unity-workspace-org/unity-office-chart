@@ -4,7 +4,7 @@ global:
 
 web:
   image:
-    tag: "v1.1.19-vuthy"
+    tag: "v1.1.19"
   replicaCount: 3
   autoscaling:
     enabled: true
@@ -37,7 +37,7 @@ uoffice:
 
 wopi:
   image:
-    tag: "v2.0.13-vuthy"
+    tag: "v2.0.13"
   persistence:
     enabled: false
 

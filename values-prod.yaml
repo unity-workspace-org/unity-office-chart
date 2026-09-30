@@ -27,7 +27,7 @@ web:
       memory: 512Mi
 
 uoffice:
-  replicaCount: 2
+  replicaCount: 1
   resources:
     limits:
       cpu: 4000m

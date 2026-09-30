@@ -5,6 +5,7 @@ global:
 web:
   image:
     tag: "v1.1.19"
+    pullPolicy: Always
   replicaCount: 3
   autoscaling:
     enabled: true
@@ -38,6 +39,7 @@ uoffice:
 wopi:
   image:
     tag: "v2.0.13"
+    pullPolicy: Always
   persistence:
     enabled: false
 

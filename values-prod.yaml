@@ -38,7 +38,7 @@ uoffice:
 
 wopi:
   image:
-    tag: "v2.0.18"
+    tag: "v2.0.19"
   persistence:
     enabled: true
     storageClass: "longhorn"

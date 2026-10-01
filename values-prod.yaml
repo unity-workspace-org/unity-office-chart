@@ -4,8 +4,13 @@ global:
 
 web:
   image:
-    tag: "v1.1.34"
+    tag: "latest"
     pullPolicy: Always
+  annotations:
+    keel.sh/policy: "force"
+    keel.sh/trigger: "poll"
+    keel.sh/pollSchedule: "@every 1m"
+    keel.sh/matchTag: "true"
   replicaCount: 3
   autoscaling:
     enabled: true
@@ -38,7 +43,13 @@ uoffice:
 
 wopi:
   image:
-    tag: "v2.0.19"
+    tag: "latest"
+    pullPolicy: Always
+  annotations:
+    keel.sh/policy: "force"
+    keel.sh/trigger: "poll"
+    keel.sh/pollSchedule: "@every 1m"
+    keel.sh/matchTag: "true"
   persistence:
     enabled: true
     storageClass: "longhorn"

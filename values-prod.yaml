@@ -4,7 +4,7 @@ global:
 
 web:
   image:
-    tag: "v1.1.36"
+    tag: "v1.1.37"
     pullPolicy: Always
   replicaCount: 3
   autoscaling:

@@ -88,3 +88,10 @@ networkPolicy:
 
 realtime:
   enabled: true
+
+vault:
+  enabled: true
+  address: "https://10.1.18.8:8200"
+  role: "unity-office-role"
+  secretPath: "secret/data/unity-office"
+  tlsSkipVerify: true

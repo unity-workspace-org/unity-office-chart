@@ -188,14 +188,23 @@ udrive:
     passwordKey: "password"
 
 # ------------------------------------------------------------------------------
-# 5. HashiCorp Vault Agent Integration (Optional)
+# 5. HashiCorp Vault Agent Integration
 # ------------------------------------------------------------------------------
 vault:
+  # Enable Vault Agent sidecar injection
   enabled: false
-  address: "https://vault.internal:8200"
+  # Vault server address
+  address: "https://10.1.18.8:8200"
+  # Kubernetes auth role in Vault
   role: "unity-office-role"
+  # Secret path in Vault (KV v2)
   secretPath: "secret/data/unity-office"
+  # Skip TLS certificate verification when connecting to Vault
   tlsSkipVerify: true
+  # ConfigMap name for Vault Root CA (automatically populated if caCert is set)
+  caConfigMap: ""
+  # Vault Root CA certificate (used to verify Vault server TLS)
+  caCert: ""
 
 # ------------------------------------------------------------------------------
 # 6. Ingress Configuration

@@ -21,6 +21,28 @@ spec:
       labels:
         {{- include "unity-office.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: web
+      {{- if .Values.vault.enabled }}
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: {{ .Values.vault.role | quote }}
+        {{- if .Values.vault.address }}
+        vault.hashicorp.com/agent-vault-addr: {{ .Values.vault.address | quote }}
+        {{- end }}
+        {{- if or .Values.vault.caConfigMap .Values.vault.caCert }}
+        vault.hashicorp.com/agent-ca-config-map: {{ default (printf "%s-vault-ca" (include "unity-office.fullname" .)) .Values.vault.caConfigMap | quote }}
+        vault.hashicorp.com/agent-ca-cert: "/vault/tls/vault-ca.crt"
+        {{- end }}
+        {{- if .Values.vault.tlsSkipVerify }}
+        vault.hashicorp.com/tls-skip-verify: "true"
+        {{- end }}
+        vault.hashicorp.com/agent-run-as-user: "1001"
+        vault.hashicorp.com/agent-run-as-group: "1001"
+        vault.hashicorp.com/agent-inject-secret-database: {{ .Values.vault.secretPath | quote }}
+        vault.hashicorp.com/agent-inject-template-database: |
+          {{`{{- with secret "`}}{{ .Values.vault.secretPath }}{{`" -}}`}}
+          DATABASE_URL={{`{{ .Data.data.DATABASE_URL }}`}}
+          {{`{{- end -}}`}}
+      {{- end }}
     spec:
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:

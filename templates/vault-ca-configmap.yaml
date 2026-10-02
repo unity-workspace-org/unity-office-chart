@@ -1,0 +1,10 @@
+{{- if and .Values.vault.enabled .Values.vault.caCert -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ default (printf "%s-vault-ca" (include "unity-office.fullname" .)) .Values.vault.caConfigMap }}
+  labels:
+    {{- include "unity-office.labels" . | nindent 4 }}
+data:
+  vault-ca.crt: {{ .Values.vault.caCert | quote }}
+{{- end }}

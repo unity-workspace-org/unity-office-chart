@@ -4,13 +4,7 @@ global:
 
 web:
   image:
-    tag: "latest"
-    pullPolicy: Always
-  annotations:
-    keel.sh/policy: "force"
-    keel.sh/trigger: "poll"
-    keel.sh/pollSchedule: "@every 1m"
-    keel.sh/matchTag: "true"
+    tag: "v1.1.17"
   replicaCount: 3
   autoscaling:
     enabled: true
@@ -32,7 +26,7 @@ web:
       memory: 512Mi
 
 uoffice:
-  replicaCount: 1
+  replicaCount: 2
   resources:
     limits:
       cpu: 4000m
@@ -43,17 +37,9 @@ uoffice:
 
 wopi:
   image:
-    tag: "latest"
-    pullPolicy: Always
-  annotations:
-    keel.sh/policy: "force"
-    keel.sh/trigger: "poll"
-    keel.sh/pollSchedule: "@every 1m"
-    keel.sh/matchTag: "true"
+    tag: "v2.0.0"
   persistence:
-    enabled: true
-    storageClass: "longhorn"
-    size: 5Gi
+    enabled: false
 
 udrive:
   url: "https://drive.unity-workspace.com"
@@ -84,7 +70,4 @@ ingress:
   tls: []
 
 networkPolicy:
-  enabled: true
-
-realtime:
   enabled: true

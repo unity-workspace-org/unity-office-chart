@@ -24,7 +24,6 @@ serviceAccount:
 web:
   enabled: true
   replicaCount: 2
-  annotations: {}
 
   image:
     repository: ghcr.io/unity-workspace-org/uoffice-web
@@ -132,7 +131,6 @@ uoffice:
 wopi:
   enabled: true
   replicaCount: 1
-  annotations: {}
 
   image:
     repository: ghcr.io/unity-workspace-org/uoffice-wopi

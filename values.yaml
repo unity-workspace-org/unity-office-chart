@@ -24,7 +24,6 @@ serviceAccount:
 web:
   enabled: true
   replicaCount: 2
-  annotations: {}
 
   image:
     repository: ghcr.io/unity-workspace-org/uoffice-web
@@ -104,7 +103,7 @@ uoffice:
     dontGenSslCert: "1"
     # NOTE: num_prespawn_children and remote_font_config.url are set via args: in the deployment template.
     # Only put params here that are NOT in args:.
-    extraParams: "--o:ssl.enable=false --o:ssl.termination=true --o:welcome.enable=false --o:server_name=uoffice.unity-workspace.com --o:net.proto=IPv4 --o:forkit_timeout_secs=60 --o:per_document.limit_load_secs=60"
+    extraParams: "--o:ssl.enable=false --o:ssl.termination=true --o:welcome.enable=false --o:server_name=uoffice.unity-workspace.com --o:net.proto=IPv4 --o:forkit_timeout_secs=60 --o:per_document.limit_load_secs=60 --o:net.post_allow.host=.*"
     # Additional domains allowed to frame Collabora (comma-separated)
     aliasgroup1: ""
 
@@ -132,7 +131,6 @@ uoffice:
 wopi:
   enabled: true
   replicaCount: 1
-  annotations: {}
 
   image:
     repository: ghcr.io/unity-workspace-org/uoffice-wopi

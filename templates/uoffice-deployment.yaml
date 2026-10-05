@@ -46,6 +46,7 @@ spec:
           args:
             - "--o:remote_font_config.url=https://{{ .Values.ingress.hosts.web.host }}/api/fonts.json"
             - "--o:num_prespawn_children=1"
+            - "--o:net.post_allow.host=.*"
             {{- with .Values.uoffice.extraArgs }}
             {{- toYaml . | nindent 12 }}
             {{- end }}

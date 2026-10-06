@@ -56,6 +56,13 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: null
     traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
+    traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
+    traefik.ingress.kubernetes.io/service.sticky.cookie.name: "uoffice_route"
+    traefik.ingress.kubernetes.io/service.sticky.cookie.secure: "true"
+    traefik.ingress.kubernetes.io/service.sticky.cookie.samesite: "none"
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "uoffice_route"
+    nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
   hosts:
     web:
       host: "office.unity-workspace.com"

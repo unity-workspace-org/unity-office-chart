@@ -8,6 +8,8 @@ metadata:
     app.kubernetes.io/component: wopi
 spec:
   replicas: {{ .Values.wopi.replicaCount }}
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{- include "unity-office.selectorLabels" . | nindent 6 }}

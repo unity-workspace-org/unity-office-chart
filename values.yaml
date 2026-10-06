@@ -115,11 +115,11 @@ uoffice:
 
   resources:
     limits:
-      cpu: 2000m
-      memory: 2048Mi
+      cpu: 4000m
+      memory: 8192Mi
     requests:
-      cpu: 250m
-      memory: 512Mi
+      cpu: 1000m
+      memory: 2048Mi
 
   nodeSelector: {}
   tolerations: []

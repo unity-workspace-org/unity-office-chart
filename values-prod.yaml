@@ -36,10 +36,10 @@ uoffice:
   resources:
     limits:
       cpu: 4000m
-      memory: 4096Mi
+      memory: 8192Mi
     requests:
-      cpu: 500m
-      memory: 1024Mi
+      cpu: 1000m
+      memory: 2048Mi
 
 wopi:
   image:

@@ -33,6 +33,7 @@ web:
 
 uoffice:
   replicaCount: 1
+  numPrespawnChildren: 3
   resources:
     limits:
       cpu: 4000m

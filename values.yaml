@@ -89,6 +89,7 @@ web:
 uoffice:
   enabled: true
   replicaCount: 1
+  numPrespawnChildren: 3
 
   image:
     repository: ghcr.io/unity-workspace-org/uoffice

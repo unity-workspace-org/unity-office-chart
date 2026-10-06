@@ -27,6 +27,15 @@ spec:
     - host: {{ .Values.ingress.hosts.web.host | quote }}
       http:
         paths:
+          {{- if .Values.realtime.enabled }}
+          - path: /ws
+            pathType: Prefix
+            backend:
+              service:
+                name: unity-realtime
+                port:
+                  number: 8088
+          {{- end }}
           {{- range .Values.ingress.hosts.web.paths }}
           - path: {{ .path }}
             pathType: {{ .pathType }}
@@ -49,5 +58,4 @@ spec:
                   number: {{ $.Values.uoffice.service.port }}
           {{- end }}
 {{- end }}
-          {{- end }}
-{{- end }}
+

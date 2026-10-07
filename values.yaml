@@ -27,8 +27,13 @@ web:
 
   image:
     repository: ghcr.io/unity-workspace-org/uoffice-web
-    pullPolicy: IfNotPresent
-    tag: "v1.1.5"
+    pullPolicy: Always
+    tag: "latest"
+
+  annotations:
+    keel.sh/policy: "force"
+    keel.sh/trigger: "poll"
+    keel.sh/pollSchedule: "@every 1m"
 
   service:
     type: ClusterIP
@@ -135,8 +140,13 @@ wopi:
 
   image:
     repository: ghcr.io/unity-workspace-org/uoffice-wopi
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     tag: "latest"
+
+  annotations:
+    keel.sh/policy: "force"
+    keel.sh/trigger: "poll"
+    keel.sh/pollSchedule: "@every 1m"
 
   service:
     type: ClusterIP

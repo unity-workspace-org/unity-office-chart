@@ -77,6 +77,8 @@ spec:
             {{- end }}
             - name: COLLABORA_CONVERT_URL
               value: "http://{{ include "unity-office.fullname" . }}-uoffice:9980/cool/convert-to/png"
+            - name: WOPI_FONT_BASE_URL
+              value: "https://{{ .Values.ingress.hosts.web.host }}"
             - name: WOPI_ALLOWED_ORIGINS
               value: "http://{{ include "unity-office.fullname" . }}-web:3000,http://{{ include "unity-office.fullname" . }}-uoffice:9980{{ if .Values.ingress.enabled }},https://{{ .Values.ingress.hosts.web.host }},https://{{ .Values.ingress.hosts.collabora.host }}{{ end }}"
           volumeMounts:

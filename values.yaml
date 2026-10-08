@@ -197,7 +197,20 @@ udrive:
     passwordKey: "password"
 
 # ------------------------------------------------------------------------------
-# 5. HashiCorp Vault Agent Integration
+# 5. CloudNativePG PostgreSQL Database (User Settings & Pinned Templates Sync)
+# ------------------------------------------------------------------------------
+database:
+  enabled: true
+  instances: 1
+  imageName: "ghcr.io/cloudnative-pg/postgresql:16.4"
+  databaseName: "unity_office"
+  user: "office"
+  storage:
+    size: "5Gi"
+    storageClass: "longhorn"
+
+# ------------------------------------------------------------------------------
+# 6. HashiCorp Vault Agent Integration
 # ------------------------------------------------------------------------------
 vault:
   # Enable Vault Agent sidecar injection

@@ -81,6 +81,13 @@ spec:
                 secretKeyRef:
                   name: {{ if .Values.udrive.auth.existingSecret }}{{ .Values.udrive.auth.existingSecret }}{{ else }}{{ include "unity-office.fullname" . }}-udrive{{ end }}
                   key: {{ .Values.udrive.auth.passwordKey | default "password" }}
+            {{- if and .Values.database.enabled (not .Values.vault.enabled) }}
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "unity-office.fullname" . }}-db-app
+                  key: uri
+            {{- end }}
           livenessProbe:
             httpGet:
               path: /

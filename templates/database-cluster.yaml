@@ -1,0 +1,19 @@
+{{- if .Values.database.enabled -}}
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ include "unity-office.fullname" . }}-db
+  labels:
+    {{- include "unity-office.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+spec:
+  instances: {{ .Values.database.instances | default 1 }}
+  imageName: {{ .Values.database.imageName | default "ghcr.io/cloudnative-pg/postgresql:16.4" | quote }}
+  storage:
+    size: {{ .Values.database.storage.size | default "5Gi" | quote }}
+    storageClass: {{ .Values.database.storage.storageClass | default "longhorn" | quote }}
+  bootstrap:
+    initdb:
+      database: {{ .Values.database.databaseName | default "unity_office" | quote }}
+      owner: {{ .Values.database.user | default "office" | quote }}
+{{- end }}

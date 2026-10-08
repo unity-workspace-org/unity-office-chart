@@ -45,6 +45,16 @@ spec:
       ports:
         - protocol: TCP
           port: 8088
+    {{- if .Values.database.enabled }}
+    # Allow communication to CloudNativePG PostgreSQL database (port 5432)
+    - to:
+        - podSelector:
+            matchLabels:
+              cnpg.io/cluster: {{ include "unity-office.fullname" . }}-db
+      ports:
+        - protocol: TCP
+          port: 5432
+    {{- end }}
     - ports:
         - protocol: TCP
           port: 9200

@@ -92,8 +92,15 @@ ingress:
 networkPolicy:
   enabled: true
 
-realtime:
+database:
   enabled: true
+  instances: 1
+  imageName: "ghcr.io/cloudnative-pg/postgresql:16.4"
+  databaseName: "unity_office"
+  user: "office"
+  storage:
+    size: "5Gi"
+    storageClass: "longhorn"
 
 vault:
   enabled: false

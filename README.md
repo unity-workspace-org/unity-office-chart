@@ -16,10 +16,16 @@ Official production Helm chart for deploying the **Unity Office Document Suite**
                      │   uoffice-web    │   │      uoffice      │
                      │  (Next.js 16)    │   │ (Collabora Online)│
                      │   [Port 3000]    │   │    [Port 9980]    │
-                     └────────┬─────────┘   └─────────┬─────────┘
-                              │                       │
-                       WebDAV │                       │ WOPI Protocol
-                              ▼                       ▼
+                     └───────┬────┬─────┘   └─────────┬─────────┘
+                             │    │                   │
+                      WebDAV │    │ PostgreSQL        │ WOPI Protocol
+                             │    │ (Port 5432)       │
+                             │    ▼                   │
+                             │  ┌──────────────────┐  │
+                             │  │ unity-office-db  │  │
+                             │  │ (CloudNativePG)  │  │
+                             │  └──────────────────┘  │
+                             ▼                        ▼
                      ┌──────────────────────────────────────────┐
                      │               uoffice-wopi               │
                      │           (WOPI Storage Bridge)          │
@@ -130,6 +136,21 @@ helm install unity-office . \
 | `udrive.auth.username` | Service account username | `admin` |
 | `udrive.auth.password` | Service account password | `admin` |
 | `udrive.auth.existingSecret` | Use existing Kubernetes Secret | `""` |
+
+### Database (`database` - CloudNativePG PostgreSQL)
+
+| Parameter | Description | Default |
+| :--- | :--- | :--- |
+| `database.enabled` | Deploy CloudNativePG PostgreSQL cluster | `true` |
+| `database.instances` | Number of database replica instances | `1` |
+| `database.imageName` | PostgreSQL container image | `ghcr.io/cloudnative-pg/postgresql:16.4` |
+| `database.databaseName` | Application database name | `unity_office` |
+| `database.user` | Database owner username | `office` |
+| `database.storage.size` | Persistent storage volume size | `5Gi` |
+| `database.storage.storageClass` | StorageClass for persistence | `longhorn` |
+
+> [!NOTE]
+> The PostgreSQL database persists `user_settings` and `pinned_templates` permanently across devices, enabling real-time cross-device preference sync and template pinning. If disabled, Unity Office gracefully falls back to local browser storage and UDrive.
 
 ### Ingress & SSL
 

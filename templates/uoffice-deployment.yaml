@@ -22,6 +22,10 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.uoffice.hostAliases }}
+      hostAliases:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ include "unity-office.fullname" . }}-sa
       {{- end }}

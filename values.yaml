@@ -171,6 +171,13 @@ wopi:
   tolerations: []
   affinity: {}
 
+  # Host aliases to resolve internal cluster ingress endpoints
+  hostAliases:
+    - ip: "10.1.16.200"
+      hostnames:
+        - "office.unity-workspace.com"
+        - "uoffice.unity-workspace.com"
+
 # ------------------------------------------------------------------------------
 # 4. UDrive (ownCloud Infinite Scale) Storage Integration
 # ------------------------------------------------------------------------------

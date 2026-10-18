@@ -40,7 +40,7 @@ uoffice:
 
 wopi:
   image:
-    tag: "latest"
+    tag: "45a04374"
     pullPolicy: Always
   annotations: {}
   persistence:

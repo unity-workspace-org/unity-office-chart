@@ -30,10 +30,7 @@ web:
     pullPolicy: Always
     tag: "latest"
 
-  annotations:
-    keel.sh/policy: "force"
-    keel.sh/trigger: "poll"
-    keel.sh/pollSchedule: "@every 1m"
+  annotations: {}
 
   service:
     type: ClusterIP
@@ -143,10 +140,7 @@ wopi:
     pullPolicy: Always
     tag: "latest"
 
-  annotations:
-    keel.sh/policy: "force"
-    keel.sh/trigger: "poll"
-    keel.sh/pollSchedule: "@every 1m"
+  annotations: {}
 
   service:
     type: ClusterIP

@@ -6,6 +6,10 @@ metadata:
   labels:
     {{- include "unity-office.labels" . | nindent 4 }}
     app.kubernetes.io/component: database
+  annotations:
+    helm.sh/resource-policy: keep
+    argocd.argoproj.io/sync-options: Prune=false
+    argocd.argoproj.io/sync-wave: "-1"
 spec:
   instances: {{ .Values.database.instances | default 1 }}
   imageName: {{ .Values.database.imageName | default "ghcr.io/cloudnative-pg/postgresql:16.4" | quote }}

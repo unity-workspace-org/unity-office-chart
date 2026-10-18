@@ -6,10 +6,7 @@ web:
   image:
     tag: "latest"
     pullPolicy: Always
-  annotations:
-    keel.sh/policy: "force"
-    keel.sh/trigger: "poll"
-    keel.sh/pollSchedule: "@every 1m"
+  annotations: {}
   replicaCount: 3
   autoscaling:
     enabled: true
@@ -45,10 +42,7 @@ wopi:
   image:
     tag: "latest"
     pullPolicy: Always
-  annotations:
-    keel.sh/policy: "force"
-    keel.sh/trigger: "poll"
-    keel.sh/pollSchedule: "@every 1m"
+  annotations: {}
   persistence:
     enabled: true
     storageClass: "longhorn"

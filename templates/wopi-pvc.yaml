@@ -6,6 +6,10 @@ metadata:
   labels:
     {{- include "unity-office.labels" . | nindent 4 }}
     app.kubernetes.io/component: wopi
+  annotations:
+    helm.sh/resource-policy: keep
+    argocd.argoproj.io/sync-options: Prune=false
+    argocd.argoproj.io/sync-wave: "-1"
 spec:
   accessModes:
     - {{ .Values.wopi.persistence.accessMode | quote }}

@@ -40,7 +40,7 @@ uoffice:
 
 wopi:
   image:
-    tag: "16f53637"
+    tag: "1e732952"
     pullPolicy: Always
   annotations: {}
   persistence:

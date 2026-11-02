@@ -72,11 +72,15 @@ ingress:
   hosts:
     web:
       host: "office.unity-workspace.com"
+      additionalHosts:
+        - "staging-office.unity-workspace.com"
       paths:
         - path: /
           pathType: Prefix
     collabora:
       host: "uoffice.unity-workspace.com"
+      additionalHosts:
+        - "staging-uoffice.unity-workspace.com"
       paths:
         - path: /
           pathType: Prefix

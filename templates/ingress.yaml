@@ -24,10 +24,12 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    - host: {{ .Values.ingress.hosts.web.host | quote }}
+    {{- $webHosts := concat (list .Values.ingress.hosts.web.host) (.Values.ingress.hosts.web.additionalHosts | default list) }}
+    {{- range $webHosts }}
+    - host: {{ . | quote }}
       http:
         paths:
-          {{- if .Values.realtime.enabled }}
+          {{- if $.Values.realtime.enabled }}
           - path: /ws
             pathType: Prefix
             backend:
@@ -36,7 +38,7 @@ spec:
                 port:
                   number: 8088
           {{- end }}
-          {{- range .Values.ingress.hosts.web.paths }}
+          {{- range $.Values.ingress.hosts.web.paths }}
           - path: {{ .path }}
             pathType: {{ .pathType }}
             backend:
@@ -45,10 +47,13 @@ spec:
                 port:
                   number: {{ $.Values.web.service.port }}
           {{- end }}
-    - host: {{ .Values.ingress.hosts.collabora.host | quote }}
+    {{- end }}
+    {{- $collabHosts := concat (list .Values.ingress.hosts.collabora.host) (.Values.ingress.hosts.collabora.additionalHosts | default list) }}
+    {{- range $collabHosts }}
+    - host: {{ . | quote }}
       http:
         paths:
-          {{- range .Values.ingress.hosts.collabora.paths }}
+          {{- range $.Values.ingress.hosts.collabora.paths }}
           - path: {{ .path }}
             pathType: {{ .pathType }}
             backend:
@@ -57,5 +62,6 @@ spec:
                 port:
                   number: {{ $.Values.uoffice.service.port }}
           {{- end }}
+    {{- end }}
 {{- end }}
 

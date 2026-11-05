@@ -65,6 +65,10 @@ spec:
               value: {{ .Values.render.timeoutSecs | quote }}
             - name: RENDER_MAX_UPLOAD_MB
               value: {{ .Values.render.maxUploadMb | quote }}
+            - name: RENDER_IMAGE_FORMAT
+              value: {{ .Values.render.imageFormat | quote }}
+            - name: RENDER_JPEG_QUALITY
+              value: {{ .Values.render.jpegQuality | quote }}
             {{- with .Values.render.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}

@@ -36,6 +36,15 @@ web:
     type: ClusterIP
     port: 3000
 
+  # Shared read-write cache for template previews/thumbnails. Every web replica
+  # sees the same rendered pages, so a template is rendered once instead of once
+  # per pod, and cached previews survive pod restarts.
+  previewCache:
+    enabled: true
+    accessMode: ReadWriteMany
+    size: 10Gi
+    storageClass: "longhorn"
+
   # Horizontal Pod Autoscaling (HPA)
   autoscaling:
     enabled: true
@@ -199,6 +208,9 @@ render:
   maxConcurrency: 1
   timeoutSecs: 90
   maxUploadMb: 50
+  # JPEG keeps template previews 3-5x smaller than PNG.
+  imageFormat: jpeg
+  jpegQuality: 85
 
   # Scratch space for uploaded documents and rendered page output
   tmpDirSizeLimit: 2Gi

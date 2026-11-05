@@ -1,0 +1,21 @@
+{{- if and .Values.web.enabled .Values.web.previewCache.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "unity-office.fullname" . }}-preview-cache
+  labels:
+    {{- include "unity-office.labels" . | nindent 4 }}
+    app.kubernetes.io/component: web
+  annotations:
+    helm.sh/resource-policy: keep
+    argocd.argoproj.io/sync-options: Prune=false
+spec:
+  accessModes:
+    - {{ .Values.web.previewCache.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.web.previewCache.size | quote }}
+  {{- if .Values.web.previewCache.storageClass }}
+  storageClassName: {{ .Values.web.previewCache.storageClass | quote }}
+  {{- end }}
+{{- end }}

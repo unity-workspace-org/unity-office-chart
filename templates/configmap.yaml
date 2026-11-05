@@ -13,6 +13,10 @@ data:
   COLLABORA_INTERNAL_URL: "http://{{ include "unity-office.fullname" . }}-uoffice:9980"
   WOPI_INTERNAL_URL: "http://{{ include "unity-office.fullname" . }}-wopi:8055"
   NEXT_PUBLIC_WOPI_INTERNAL_URL: "http://{{ include "unity-office.fullname" . }}-wopi:8055"
+  {{- if .Values.web.previewCache.enabled }}
+  TEMPLATE_PREVIEW_CACHE_DIR: "/mnt/shared/unity-preview-cache"
+  TEMPLATE_THUMBNAIL_CACHE_DIR: "/mnt/shared/unity-thumbnail-cache"
+  {{- end }}
   {{- if .Values.render.enabled }}
   TEMPLATE_RENDER_SERVICE_URL: "http://{{ include "unity-office.fullname" . }}-render:{{ .Values.render.service.port }}"
   TEMPLATE_RENDER_WIDTH: {{ .Values.render.width | quote }}

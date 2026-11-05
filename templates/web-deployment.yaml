@@ -104,6 +104,19 @@ spec:
             periodSeconds: 10
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
+          {{- if .Values.web.previewCache.enabled }}
+          volumeMounts:
+            - name: preview-cache
+              mountPath: /mnt/shared/unity-preview-cache
+            - name: preview-cache
+              mountPath: /mnt/shared/unity-thumbnail-cache
+          {{- end }}
+      {{- if .Values.web.previewCache.enabled }}
+      volumes:
+        - name: preview-cache
+          persistentVolumeClaim:
+            claimName: {{ include "unity-office.fullname" . }}-preview-cache
+      {{- end }}
       {{- with .Values.web.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

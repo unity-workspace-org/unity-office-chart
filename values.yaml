@@ -173,7 +173,79 @@ wopi:
         - "uoffice.unity-workspace.com"
 
 # ------------------------------------------------------------------------------
-# 4. UDrive (ownCloud Infinite Scale) Storage Integration
+# 4. Template Preview Render Service (LibreOfficeKit)
+# ------------------------------------------------------------------------------
+# Dedicated headless renderer for template thumbnails/previews. The web portal
+# calls it through TEMPLATE_RENDER_SERVICE_URL and automatically falls back to
+# the Collabora convert-to-PDF chain when this service is disabled or unhealthy.
+render:
+  enabled: true
+  replicaCount: 1
+
+  image:
+    repository: ghcr.io/unity-workspace-org/uoffice-render
+    pullPolicy: Always
+    tag: "latest"
+
+  annotations: {}
+
+  service:
+    type: ClusterIP
+    port: 8057
+
+  # Renderer limits (passed to the render service as RENDER_* env vars)
+  width: 1600
+  maxPages: 35
+  maxConcurrency: 1
+  timeoutSecs: 90
+  maxUploadMb: 50
+
+  # Scratch space for uploaded documents and rendered page output
+  tmpDirSizeLimit: 2Gi
+
+  # Extra environment variables for the render container
+  extraEnv: []
+
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4096Mi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+    runAsGroup: 1001
+    fsGroup: 1001
+    seccompProfile:
+      type: RuntimeDefault
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    capabilities:
+      drop:
+        - ALL
+
+  nodeSelector: {}
+  tolerations: []
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/component
+                  operator: In
+                  values:
+                    - render
+            topologyKey: kubernetes.io/hostname
+
+# ------------------------------------------------------------------------------
+# 5. UDrive (ownCloud Infinite Scale) Storage Integration
 # ------------------------------------------------------------------------------
 udrive:
   # Base URL of your UDrive deployment (in-cluster or external)
@@ -198,7 +270,7 @@ udrive:
     passwordKey: "password"
 
 # ------------------------------------------------------------------------------
-# 5. CloudNativePG PostgreSQL Database (User Settings & Pinned Templates Sync)
+# 6. CloudNativePG PostgreSQL Database (User Settings & Pinned Templates Sync)
 # ------------------------------------------------------------------------------
 database:
   enabled: true
@@ -211,7 +283,7 @@ database:
     storageClass: "longhorn"
 
 # ------------------------------------------------------------------------------
-# 6. HashiCorp Vault Agent Integration
+# 7. HashiCorp Vault Agent Integration
 # ------------------------------------------------------------------------------
 vault:
   # Enable Vault Agent sidecar injection
@@ -230,7 +302,7 @@ vault:
   caCert: ""
 
 # ------------------------------------------------------------------------------
-# 6. Ingress Configuration
+# 8. Ingress Configuration
 # ------------------------------------------------------------------------------
 ingress:
   enabled: true
@@ -276,13 +348,13 @@ ingress:
         - uoffice.workspace.com
 
 # ------------------------------------------------------------------------------
-# 7. Network Policy (Optional Zero-Trust Security)
+# 9. Network Policy (Optional Zero-Trust Security)
 # ------------------------------------------------------------------------------
 networkPolicy:
   enabled: false
 
 # ------------------------------------------------------------------------------
-# 8. Unity Realtime Service
+# 10. Unity Realtime Service
 # ------------------------------------------------------------------------------
 realtime:
   # Set to true to expose the /ws path in the ingress, routing WebSocket and

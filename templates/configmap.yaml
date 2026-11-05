@@ -11,6 +11,12 @@ data:
   COLLABORA_INTERNAL_URL: "http://{{ include "unity-office.fullname" . }}-uoffice:9980"
   WOPI_INTERNAL_URL: "http://{{ include "unity-office.fullname" . }}-wopi:8055"
   NEXT_PUBLIC_WOPI_INTERNAL_URL: "http://{{ include "unity-office.fullname" . }}-wopi:8055"
+  {{- if .Values.render.enabled }}
+  TEMPLATE_RENDER_SERVICE_URL: "http://{{ include "unity-office.fullname" . }}-render:{{ .Values.render.service.port }}"
+  TEMPLATE_RENDER_WIDTH: {{ .Values.render.width | quote }}
+  # Give the web tier a small buffer over the renderer's own timeout.
+  TEMPLATE_RENDER_TIMEOUT_MS: {{ add (mul .Values.render.timeoutSecs 1000) 30000 | quote }}
+  {{- end }}
   UDRIVE_URL: {{ .Values.udrive.url | quote }}
   UDRIVE_STORAGE_DIR: {{ .Values.udrive.storageDir | quote }}
   UDRIVE_INSECURE_SKIP_VERIFY: {{ .Values.udrive.insecureSkipVerify | quote }}

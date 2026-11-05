@@ -37,6 +37,10 @@ spec:
           port: 8055
         - protocol: TCP
           port: 9980
+        {{- if .Values.render.enabled }}
+        - protocol: TCP
+          port: {{ .Values.render.service.port }}
+        {{- end }}
     # Allow communication to unity-realtime (separate deployment, port 8088)
     - to:
         - podSelector:
@@ -140,4 +144,40 @@ spec:
           port: 9980
         - protocol: TCP
           port: 443
+{{- if .Values.render.enabled }}
+---
+# 4. Hardened Internal Network Policy for the Template Render Service
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "unity-office.fullname" . }}-render-netpol
+  labels:
+    {{- include "unity-office.labels" . | nindent 4 }}
+    app.kubernetes.io/component: render
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "unity-office.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: render
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Only the web portal may submit documents for rendering
+    - from:
+        - podSelector:
+            matchLabels:
+              {{- include "unity-office.selectorLabels" . | nindent 14 }}
+              app.kubernetes.io/component: web
+      ports:
+        - protocol: TCP
+          port: {{ .Values.render.service.port }}
+  egress:
+    # DNS only; rendering happens entirely inside the pod
+    - ports:
+        - protocol: TCP
+          port: 53
+        - protocol: UDP
+          port: 53
+{{- end }}
 {{- end }}

@@ -1,0 +1,19 @@
+{{- if .Values.render.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "unity-office.fullname" . }}-render
+  labels:
+    {{- include "unity-office.labels" . | nindent 4 }}
+    app.kubernetes.io/component: render
+spec:
+  type: {{ .Values.render.service.type }}
+  ports:
+    - port: {{ .Values.render.service.port }}
+      targetPort: render
+      protocol: TCP
+      name: render
+  selector:
+    {{- include "unity-office.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: render
+{{- end }}

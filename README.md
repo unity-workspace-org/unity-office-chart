@@ -1,6 +1,6 @@
 # Unity Office Helm Chart
 
-Official production Helm chart for deploying the **Unity Office Document Suite** on Kubernetes, pre-configured with **UDrive (ownCloud Infinite Scale)** storage integration, **Collabora Online**, **WOPI Bridge**, and the **Next.js Web Portal**.
+Official production Helm chart for deploying the **Unity Office Document Suite** on Kubernetes, pre-configured with **UDrive (ownCloud Infinite Scale)** storage integration, **Collabora Online**, **WOPI Bridge**, the **Next.js Web Portal**, and the optional **LibreOfficeKit Template Render Service**.
 
 ---
 
@@ -124,6 +124,35 @@ helm install unity-office . \
 | `wopi.image.tag` | Image tag | `latest` |
 | `wopi.persistence.enabled` | Persist drafts volume | `true` |
 | `wopi.persistence.size` | PVC storage size | `10Gi` |
+
+### Template Render Service (`render`)
+
+The render service is a dedicated headless LibreOfficeKit worker used to generate
+template thumbnails and slide/page previews. It runs entirely inside the cluster
+on port `8057` and is never exposed through the ingress. When enabled, the web
+portal receives `TEMPLATE_RENDER_SERVICE_URL` automatically and falls back to the
+Collabora conversion chain if the service is unavailable.
+
+| Parameter | Description | Default |
+| :--- | :--- | :--- |
+| `render.enabled` | Deploy the dedicated template render service | `true` |
+| `render.replicaCount` | Number of renderer replicas | `1` |
+| `render.image.repository` | Renderer image repository | `ghcr.io/unity-workspace-org/uoffice-render` |
+| `render.image.tag` | Renderer image tag | `latest` |
+| `render.service.port` | Internal renderer HTTP port | `8057` |
+| `render.width` | Output width in pixels (`RENDER_WIDTH`) | `1600` |
+| `render.maxPages` | Maximum pages/slides per document (`RENDER_MAX_PAGES`) | `35` |
+| `render.maxConcurrency` | Concurrent render jobs per replica (`RENDER_MAX_CONCURRENCY`) | `1` |
+| `render.timeoutSecs` | Per-document render timeout (`RENDER_TIMEOUT_SECS`) | `90` |
+| `render.maxUploadMb` | Maximum upload size in MiB (`RENDER_MAX_UPLOAD_MB`) | `50` |
+| `render.tmpDirSizeLimit` | Scratch `emptyDir` size for uploads/output | `2Gi` |
+| `render.resources.limits` | CPU / Memory limits | `2000m / 4096Mi` |
+| `render.resources.requests` | CPU / Memory requests | `250m / 512Mi` |
+
+> [!NOTE]
+> The renderer image is built from `unity-office-server/Dockerfile.render`. It
+> requires the native `renderpages` binary, so make sure that image is published
+> before enabling this component in a production deployment.
 
 ### UDrive Integration (`udrive`)
 

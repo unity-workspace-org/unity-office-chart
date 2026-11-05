@@ -21,8 +21,10 @@ spec:
       labels:
         {{- include "unity-office.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: web
-      {{- if .Values.vault.enabled }}
       annotations:
+        # Roll the web pods whenever the shared ConfigMap changes.
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- if .Values.vault.enabled }}
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/role: {{ .Values.vault.role | quote }}
         {{- if .Values.vault.address }}

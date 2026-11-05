@@ -1,0 +1,110 @@
+{{- if .Values.render.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "unity-office.fullname" . }}-render
+  labels:
+    {{- include "unity-office.labels" . | nindent 4 }}
+    app.kubernetes.io/component: render
+  {{- with .Values.render.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.render.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "unity-office.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: render
+  template:
+    metadata:
+      labels:
+        {{- include "unity-office.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: render
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "unity-office.fullname" . }}-sa
+      {{- end }}
+      {{- with .Values.render.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: render
+          image: "{{ .Values.render.image.repository }}:{{ .Values.render.image.tag }}"
+          imagePullPolicy: {{ .Values.render.image.pullPolicy }}
+          {{- with .Values.render.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: render
+              containerPort: {{ .Values.render.service.port }}
+              protocol: TCP
+          env:
+            # The base image runs as UID 1001 with this writable home dir.
+            - name: HOME
+              value: "/home/nonroot"
+            - name: RENDER_HOST
+              value: "0.0.0.0"
+            - name: RENDER_PORT
+              value: {{ .Values.render.service.port | quote }}
+            - name: RENDER_TMP_DIR
+              value: "/tmp/unity-render"
+            - name: RENDER_WIDTH
+              value: {{ .Values.render.width | quote }}
+            - name: RENDER_MAX_PAGES
+              value: {{ .Values.render.maxPages | quote }}
+            - name: RENDER_MAX_CONCURRENCY
+              value: {{ .Values.render.maxConcurrency | quote }}
+            - name: RENDER_TIMEOUT_SECS
+              value: {{ .Values.render.timeoutSecs | quote }}
+            - name: RENDER_MAX_UPLOAD_MB
+              value: {{ .Values.render.maxUploadMb | quote }}
+            {{- with .Values.render.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: render
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: render
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.render.resources | nindent 12 }}
+          volumeMounts:
+            - name: scratch
+              mountPath: /tmp/unity-render
+      volumes:
+        - name: scratch
+          emptyDir:
+            {{- if .Values.render.tmpDirSizeLimit }}
+            sizeLimit: {{ .Values.render.tmpDirSizeLimit }}
+            {{- end }}
+      {{- with .Values.render.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.render.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.render.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

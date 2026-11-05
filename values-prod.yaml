@@ -43,6 +43,30 @@ uoffice:
       cpu: 1000m
       memory: 2048Mi
 
+render:
+  replicaCount: 2
+  image:
+    pullPolicy: Always
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4096Mi
+    requests:
+      cpu: 500m
+      memory: 1024Mi
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/component
+                  operator: In
+                  values:
+                    - render
+            topologyKey: kubernetes.io/hostname
+
 wopi:
   image:
     tag: "445d0cb9"

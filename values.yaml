@@ -101,6 +101,7 @@ uoffice:
   enabled: true
   replicaCount: 1
   numPrespawnChildren: 3
+  maxConcurrency: 4
 
   image:
     repository: ghcr.io/unity-workspace-org/uoffice

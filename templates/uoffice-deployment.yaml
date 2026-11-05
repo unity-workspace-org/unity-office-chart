@@ -58,6 +58,7 @@ spec:
             # manifest never goes through Cloudflare/VarmanWAF.
             - "--o:remote_font_config.url=https://{{ .Values.ingress.hosts.web.host }}/api/fonts.json"
             - "--o:num_prespawn_children={{ .Values.uoffice.numPrespawnChildren | default 3 }}"
+            - "--o:per_document.max_concurrency={{ .Values.uoffice.maxConcurrency | default 4 }}"
             - "--o:net.post_allow.host[0]=.*"
             {{- with .Values.uoffice.extraArgs }}
             {{- toYaml . | nindent 12 }}

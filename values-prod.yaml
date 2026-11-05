@@ -32,12 +32,6 @@ uoffice:
   # restart never leaves Cloudflare/VarmanWAF without an origin (524).
   replicaCount: 2
   numPrespawnChildren: 6
-  # Resolve the public web host to the in-cluster Traefik LoadBalancer so the
-  # HTTPS font config/font fetches bypass Cloudflare and VarmanWAF.
-  hostAliases:
-    - ip: "10.1.16.200"
-      hostnames:
-        - "office.unity-workspace.com"
   image:
     # Bumped to the built commit SHA by the unity-office-server CI pipeline.
     tag: "543993c1"

@@ -9,10 +9,13 @@ metadata:
 spec:
   replicas: {{ .Values.uoffice.replicaCount }}
   strategy:
+    # Never run two Collabora pods at once: document sessions live in a single
+    # pod, so a surge pod would accept requests it cannot serve while the old
+    # pod is still draining.
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 1
+      maxUnavailable: 1
+      maxSurge: 0
   selector:
     matchLabels:
       {{- include "unity-office.selectorLabels" . | nindent 6 }}

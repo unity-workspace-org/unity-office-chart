@@ -38,6 +38,17 @@ spec:
                 port:
                   number: 8088
           {{- end }}
+          {{- if $.Values.uoffice.enabled }}
+          {{- range ($.Values.ingress.collaboraPaths | default list) }}
+          - path: {{ . }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "unity-office.fullname" $ }}-uoffice
+                port:
+                  number: {{ $.Values.uoffice.service.port }}
+          {{- end }}
+          {{- end }}
           {{- range $.Values.ingress.hosts.web.paths }}
           - path: {{ .path }}
             pathType: {{ .pathType }}

@@ -7,7 +7,9 @@ metadata:
 data:
   PORT: "3000"
   HOSTNAME: "0.0.0.0"
-  NEXT_PUBLIC_COLLABORA_URL: {{ if .Values.ingress.enabled }}https://{{ .Values.ingress.hosts.collabora.host }}{{ else }}http://{{ include "unity-office.fullname" . }}-uoffice:9980{{ end }}
+  # Keep the editor same-origin with the web portal (avoids third-party iframe
+  # blocking in Brave and privacy extensions).
+  NEXT_PUBLIC_COLLABORA_URL: {{ if .Values.ingress.enabled }}https://{{ .Values.ingress.hosts.web.host }}{{ else }}http://{{ include "unity-office.fullname" . }}-uoffice:9980{{ end }}
   COLLABORA_INTERNAL_URL: "http://{{ include "unity-office.fullname" . }}-uoffice:9980"
   WOPI_INTERNAL_URL: "http://{{ include "unity-office.fullname" . }}-wopi:8055"
   NEXT_PUBLIC_WOPI_INTERNAL_URL: "http://{{ include "unity-office.fullname" . }}-wopi:8055"

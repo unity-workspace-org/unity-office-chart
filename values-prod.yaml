@@ -35,7 +35,7 @@ uoffice:
   maxConcurrency: 8
   image:
     # Bumped to the built commit SHA by the unity-office-server CI pipeline.
-    tag: "540b15e8"
+    tag: "b6fd8883"
     # Always pull the rebuilt overlay image so CSP/config fixes reach the cluster.
     pullPolicy: Always
   affinity:
@@ -62,7 +62,7 @@ render:
   enabled: true
   replicaCount: 2
   image:
-    tag: "540b15e8"
+    tag: "b6fd8883"
     pullPolicy: Always
   # Keep the renderer on node1 as requested. The image and scratch volume are
   # node-local, and rendering is CPU-heavy.
@@ -90,7 +90,7 @@ render:
 
 wopi:
   image:
-    tag: "540b15e8"
+    tag: "b6fd8883"
     pullPolicy: Always
   annotations: {}
   persistence:

@@ -28,13 +28,27 @@ web:
       memory: 512Mi
 
 uoffice:
-  replicaCount: 1
+  # Keep at least two Collabora replicas so a rolling update or a single pod
+  # restart never leaves Cloudflare/VarmanWAF without an origin (524).
+  replicaCount: 2
   numPrespawnChildren: 6
   image:
     # Bumped to the built commit SHA by the unity-office-server CI pipeline.
     tag: "543993c1"
     # Always pull the rebuilt overlay image so CSP/config fixes reach the cluster.
     pullPolicy: Always
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/component
+                  operator: In
+                  values:
+                    - uoffice
+            topologyKey: kubernetes.io/hostname
   resources:
     limits:
       cpu: 4000m

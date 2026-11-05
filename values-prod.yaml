@@ -32,7 +32,7 @@ uoffice:
   numPrespawnChildren: 6
   image:
     # Bumped to the built commit SHA by the unity-office-server CI pipeline.
-    tag: "a952c239"
+    tag: "445d0cb9"
     # Always pull the rebuilt overlay image so CSP/config fixes reach the cluster.
     pullPolicy: Always
   resources:
@@ -45,7 +45,7 @@ uoffice:
 
 wopi:
   image:
-    tag: "a952c239"
+    tag: "445d0cb9"
     pullPolicy: Always
   annotations: {}
   persistence:

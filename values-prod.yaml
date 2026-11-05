@@ -44,11 +44,15 @@ uoffice:
       memory: 2048Mi
 
 render:
-  # Enable once ghcr.io/unity-workspace-org/uoffice-render is published by CI.
-  enabled: false
+  enabled: true
   replicaCount: 2
   image:
+    tag: "218ddf6e"
     pullPolicy: Always
+  # Keep the renderer on node1 as requested. The image and scratch volume are
+  # node-local, and rendering is CPU-heavy.
+  nodeSelector:
+    kubernetes.io/hostname: node1
   resources:
     limits:
       cpu: 2000m

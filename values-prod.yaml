@@ -44,6 +44,8 @@ uoffice:
       memory: 2048Mi
 
 render:
+  # Enable once ghcr.io/unity-workspace-org/uoffice-render is published by CI.
+  enabled: false
   replicaCount: 2
   image:
     pullPolicy: Always

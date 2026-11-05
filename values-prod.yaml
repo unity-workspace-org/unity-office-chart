@@ -29,12 +29,11 @@ web:
 
 uoffice:
   # Collabora keeps each document session (DocBrokers + childId) in one pod's
-  # memory. Without working sticky sessions, the WebSocket and HTTP uploads can
-  # land on different pods, which makes insertfile return 400 ("childid
-  # invalid") and makes edits lag. Keep a single replica until ingress-level
-  # session affinity is verified end to end. A rolling restart re-creates the
-  # pod, so editors reconnect/reload once after a deploy.
-  replicaCount: 1
+  # memory, so all requests for a document must reach the same pod. Sticky
+  # sessions are configured on the uoffice Service (Traefik reads the
+  # service.sticky.cookie annotations there). Verify the Set-Cookie:
+  # uoffice_route=... header on /browser and /cool before raising this.
+  replicaCount: 2
   numPrespawnChildren: 8
   maxConcurrency: 8
   image:
@@ -116,10 +115,6 @@ ingress:
   className: "traefik"
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
-    traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
-    traefik.ingress.kubernetes.io/service.sticky.cookie.name: "uoffice_route"
-    traefik.ingress.kubernetes.io/service.sticky.cookie.secure: "true"
-    traefik.ingress.kubernetes.io/service.sticky.cookie.samesite: "none"
     nginx.ingress.kubernetes.io/affinity: "cookie"
     nginx.ingress.kubernetes.io/session-cookie-name: "uoffice_route"
     nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"

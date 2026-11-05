@@ -111,6 +111,15 @@ uoffice:
   service:
     type: ClusterIP
     port: 9980
+    # Collabora document sessions live in one pod. Traefik reads these
+    # service-level annotations and returns a sticky cookie so the WebSocket
+    # and the HTTP tile/upload requests stay on the same pod.
+    annotations:
+      traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
+      traefik.ingress.kubernetes.io/service.sticky.cookie.name: "uoffice_route"
+      traefik.ingress.kubernetes.io/service.sticky.cookie.secure: "true"
+      traefik.ingress.kubernetes.io/service.sticky.cookie.samesite: "none"
+      traefik.ingress.kubernetes.io/service.sticky.cookie.httponly: "true"
 
   env:
     dontGenSslCert: "1"
@@ -334,10 +343,6 @@ ingress:
 
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
-    traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
-    traefik.ingress.kubernetes.io/service.sticky.cookie.name: "uoffice_route"
-    traefik.ingress.kubernetes.io/service.sticky.cookie.secure: "true"
-    traefik.ingress.kubernetes.io/service.sticky.cookie.samesite: "none"
     # SSL enforcement & HSTS
     nginx.ingress.kubernetes.io/affinity: "cookie"
     nginx.ingress.kubernetes.io/session-cookie-name: "uoffice_route"

@@ -4,7 +4,7 @@ global:
 
 web:
   image:
-    tag: "706f600a"
+    tag: "c0f323b4"
     pullPolicy: Always
   annotations: {}
   replicaCount: 3

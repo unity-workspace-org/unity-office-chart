@@ -1,0 +1,30 @@
+{{- if and .Values.uoffice.enabled .Values.ingress.staticPaths -}}
+{{- /*
+Stateless Collabora asset endpoint.
+
+This Service points at the same uoffice pods as the main Service but omits the
+sticky-session annotations. /browser/* must not receive the uoffice_route
+cookie: Cloudflare refuses to cache any response that sets a cookie, and the
+editor shell is ~1.1 MB, so an uncached bundle makes the iframe take 10+ seconds
+to start.
+
+Document sessions and the WebSocket keep using the sticky Service.
+*/ -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "unity-office.fullname" . }}-uoffice-static
+  labels:
+    {{- include "unity-office.labels" . | nindent 4 }}
+    app.kubernetes.io/component: uoffice-static
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.uoffice.service.port }}
+      targetPort: collabora
+      protocol: TCP
+      name: collabora
+  selector:
+    {{- include "unity-office.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: uoffice
+{{- end }}

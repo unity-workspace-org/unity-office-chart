@@ -76,3 +76,70 @@ spec:
     {{- end }}
 {{- end }}
 
+{{- /*
+Static editor assets (/browser/...) intentionally use a separate Ingress
+without the sticky-session annotations. Collabora's static bundle is ~1.1 MB;
+if the sticky `uoffice_route` cookie is attached, Cloudflare treats every
+response as uncacheable and the iframe takes 10+ seconds to start.
+
+Document sessions and the WebSocket stay on the sticky Ingress above.
+*/ -}}
+{{- if and .Values.ingress.enabled .Values.uoffice.enabled .Values.ingress.staticPaths }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "unity-office.fullname" . }}-static
+  labels:
+    {{- include "unity-office.labels" . | nindent 4 }}
+  {{- with .Values.ingress.staticAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- $webHosts := concat (list .Values.ingress.hosts.web.host) (.Values.ingress.hosts.web.additionalHosts | default list) }}
+    {{- range $webHosts }}
+    - host: {{ . | quote }}
+      http:
+        paths:
+          {{- range $.Values.ingress.staticPaths }}
+          - path: {{ . }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "unity-office.fullname" $ }}-uoffice-static
+                port:
+                  number: {{ $.Values.uoffice.service.port }}
+          {{- end }}
+    {{- end }}
+    {{- $collabHosts := concat (list .Values.ingress.hosts.collabora.host) (.Values.ingress.hosts.collabora.additionalHosts | default list) }}
+    {{- range $collabHosts }}
+    - host: {{ . | quote }}
+      http:
+        paths:
+          {{- range $.Values.ingress.staticPaths }}
+          - path: {{ . }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "unity-office.fullname" $ }}-uoffice-static
+                port:
+                  number: {{ $.Values.uoffice.service.port }}
+          {{- end }}
+    {{- end }}
+{{- end }}
+

@@ -333,13 +333,25 @@ ingress:
   # Collabora paths proxied on the web host. Serving the editor from the same
   # origin avoids Brave Shields / ad-blockers treating the iframe as a
   # third-party frame and refusing to connect.
+  #
+  # NOTE: /browser is intentionally NOT listed here. Static editor assets must
+  # not receive the sticky `uoffice_route` cookie, otherwise Cloudflare refuses
+  # to cache them and every iframe load downloads ~1.1 MB through the origin
+  # tunnel. They are routed by the separate static Ingress below.
   collaboraPaths:
-    - /browser
     - /cool
     - /coolws
     - /hosting
     - /loleaflet
     - /lool
+
+  # Stateless Collabora assets. Served by the same uoffice service but through
+  # an Ingress without sticky-cookie annotations so the edge can cache them.
+  staticPaths:
+    - /browser
+
+  staticAnnotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
 
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"

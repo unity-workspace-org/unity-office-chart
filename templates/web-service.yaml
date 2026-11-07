@@ -6,6 +6,10 @@ metadata:
   labels:
     {{- include "unity-office.labels" . | nindent 4 }}
     app.kubernetes.io/component: web
+  {{- with .Values.web.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.web.service.type }}
   ports:

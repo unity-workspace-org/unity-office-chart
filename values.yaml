@@ -19,6 +19,28 @@ serviceAccount:
   annotations: {}
 
 # ------------------------------------------------------------------------------
+# 0. Authentication (Keycloak / OIDC)
+# ------------------------------------------------------------------------------
+auth:
+  # Reference an existing Secret containing BETTER_AUTH_SECRET and (optionally)
+  # KEYCLOAK_CLIENT_SECRET. When set, the inline values below are ignored.
+  existingSecret: ""
+
+  # Generate/rotate this with: openssl rand -base64 48
+  # Required: signs Better Auth session cookies.
+  betterAuthSecret: ""
+
+  keycloak:
+    issuer: "https://auth.unity-workspace.com/realms/unity-workspace"
+    clientId: "unity-office"
+    # Optional in-cluster issuer used for token refresh, revocation, logout and
+    # JWKS. Bypasses the edge/WAF and keeps auth working if the public edge is
+    # degraded. Leave empty to use the public issuer.
+    internalIssuer: ""
+    # Only required for confidential clients. Public clients leave this empty.
+    clientSecret: ""
+
+# ------------------------------------------------------------------------------
 # 1. Unity Office Web Portal (Next.js Dashboard)
 # ------------------------------------------------------------------------------
 web:
@@ -35,6 +57,15 @@ web:
   service:
     type: ClusterIP
     port: 3000
+    # Sticky sessions keep a browser on one web replica. This complements the
+    # database-backed refresh grace cache by avoiding most cross-pod token
+    # rotation races.
+    annotations:
+      traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
+      traefik.ingress.kubernetes.io/service.sticky.cookie.name: "office_web_route"
+      traefik.ingress.kubernetes.io/service.sticky.cookie.secure: "true"
+      traefik.ingress.kubernetes.io/service.sticky.cookie.samesite: "lax"
+      traefik.ingress.kubernetes.io/service.sticky.cookie.httponly: "true"
 
   # Shared read-write cache for template previews/thumbnails. Every web replica
   # sees the same rendered pages, so a template is rendered once instead of once

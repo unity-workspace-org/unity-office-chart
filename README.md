@@ -88,6 +88,17 @@ helm install unity-office . \
 | `global.domain` | Base domain for the workspace | `workspace.com` |
 | `global.imagePullSecrets` | Docker registry credentials | `[{name: ghcr-secret}]` |
 
+### Authentication (`auth`)
+
+| Parameter | Description | Default |
+| :--- | :--- | :--- |
+| `auth.existingSecret` | Secret with `BETTER_AUTH_SECRET` / `KEYCLOAK_CLIENT_SECRET` keys | `""` |
+| `auth.betterAuthSecret` | Better Auth signing secret (required in production) | `""` |
+| `auth.keycloak.issuer` | Public Keycloak realm issuer | `https://auth.unity-workspace.com/realms/unity-workspace` |
+| `auth.keycloak.clientId` | Keycloak client ID | `unity-office` |
+| `auth.keycloak.internalIssuer` | In-cluster issuer for server-to-server auth calls | `""` |
+| `auth.keycloak.clientSecret` | Client secret (confidential clients only) | `""` |
+
 ### Web Portal (`web`)
 
 | Parameter | Description | Default |

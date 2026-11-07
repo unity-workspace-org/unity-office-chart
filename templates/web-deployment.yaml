@@ -83,6 +83,35 @@ spec:
                 secretKeyRef:
                   name: {{ if .Values.udrive.auth.existingSecret }}{{ .Values.udrive.auth.existingSecret }}{{ else }}{{ include "unity-office.fullname" . }}-udrive{{ end }}
                   key: {{ .Values.udrive.auth.passwordKey | default "password" }}
+            {{- if .Values.auth.existingSecret }}
+            - name: BETTER_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.auth.existingSecret }}
+                  key: BETTER_AUTH_SECRET
+                  optional: true
+            - name: KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.auth.existingSecret }}
+                  key: KEYCLOAK_CLIENT_SECRET
+                  optional: true
+            {{- else if or .Values.auth.betterAuthSecret .Values.auth.keycloak.clientSecret }}
+            {{- if .Values.auth.betterAuthSecret }}
+            - name: BETTER_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "unity-office.fullname" . }}-auth
+                  key: BETTER_AUTH_SECRET
+            {{- end }}
+            {{- if .Values.auth.keycloak.clientSecret }}
+            - name: KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "unity-office.fullname" . }}-auth
+                  key: KEYCLOAK_CLIENT_SECRET
+            {{- end }}
+            {{- end }}
             {{- if and .Values.database.enabled (not .Values.vault.enabled) }}
             - name: DATABASE_URL
               valueFrom:

@@ -7,6 +7,8 @@ metadata:
 data:
   PORT: "3000"
   HOSTNAME: "0.0.0.0"
+  # "iframe" = legacy embedded editor, "direct" = top-level Collabora editor.
+  EDITOR_MODE: {{ .Values.web.editorMode | default "iframe" | quote }}
   # Keep the editor same-origin with the web portal (avoids third-party iframe
   # blocking in Brave and privacy extensions).
   NEXT_PUBLIC_COLLABORA_URL: {{ if .Values.ingress.enabled }}https://{{ .Values.ingress.hosts.web.host }}{{ else }}http://{{ include "unity-office.fullname" . }}-uoffice:9980{{ end }}

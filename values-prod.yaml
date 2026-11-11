@@ -112,9 +112,16 @@ wopi:
     size: 5Gi
 
 udrive:
-  url: "https://drive.unity-workspace.com"
-  insecureSkipVerify: false
+  # Server-to-server UDrive traffic (web + WOPI bridge) stays inside the
+  # cluster. Routing it through the public hostname put Cloudflare/WAF in the
+  # document I/O path, so a public-entry outage turned every Drive-backed
+  # action in Office into a 502.
+  url: "https://udrive.udrive.svc.cluster.local:9200"
+  # The in-cluster OCIS endpoint uses its internal certificate.
+  insecureSkipVerify: true
   storageDir: "/"
+  # Browser-facing links (Show in Drive, folder badges) must stay public.
+  webUrl: "https://drive.unity-workspace.com"
   auth:
     existingSecret: "udrive-credentials"
     usernameKey: "username"

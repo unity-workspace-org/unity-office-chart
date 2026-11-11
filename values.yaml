@@ -362,6 +362,10 @@ vault:
 ingress:
   enabled: true
   className: "traefik"
+  retry:
+    enabled: true
+    attempts: 3
+    initialInterval: "100ms"
 
   # Collabora paths proxied on the web host. Serving the editor from the same
   # origin avoids Brave Shields / ad-blockers treating the iframe as a

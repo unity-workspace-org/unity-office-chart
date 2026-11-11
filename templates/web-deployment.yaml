@@ -51,6 +51,7 @@ spec:
           {{`{{- end -}}`}}
       {{- end }}
     spec:
+      terminationGracePeriodSeconds: 45
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -136,6 +137,10 @@ spec:
               port: http
             initialDelaySeconds: 10
             periodSeconds: 10
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 8"]
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
           {{- if .Values.web.previewCache.enabled }}

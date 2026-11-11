@@ -123,8 +123,13 @@ udrive:
 ingress:
   enabled: true
   className: "traefik"
+  retry:
+    enabled: true
+    attempts: 3
+    initialInterval: "100ms"
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
+    traefik.ingress.kubernetes.io/router.middlewares: "unity-office-unity-office-retry@kubernetescrd"
     nginx.ingress.kubernetes.io/affinity: "cookie"
     nginx.ingress.kubernetes.io/session-cookie-name: "uoffice_route"
     nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"

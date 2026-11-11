@@ -27,7 +27,7 @@ spec:
         {{- include "unity-office.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: wopi
     spec:
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: 45
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -92,6 +92,10 @@ spec:
             - name: data
               mountPath: /home/appuser/fonts
               subPath: fonts
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 8"]
           resources:
             {{- toYaml .Values.wopi.resources | nindent 12 }}
       volumes:

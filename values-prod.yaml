@@ -3,6 +3,8 @@ global:
   domain: unity-workspace.com
 
 web:
+  # "iframe" = legacy embedded editor, "direct" = top-level Collabora editor.
+  editorMode: "direct"
   image:
     tag: "6a1f5e22"
     pullPolicy: Always

@@ -69,7 +69,7 @@ render:
   enabled: false
   replicaCount: 2
   image:
-    tag: "75c507d8"
+    tag: "d5c358f1"
     pullPolicy: Always
   # Keep the renderer on node1 as requested. The image and scratch volume are
   # node-local, and rendering is CPU-heavy.
@@ -97,7 +97,7 @@ render:
 
 wopi:
   image:
-    tag: "75c507d8"
+    tag: "d5c358f1"
     pullPolicy: Always
   annotations: {}
   persistence:

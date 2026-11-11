@@ -389,6 +389,9 @@ ingress:
 
   staticAnnotations:
     traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
+    # /browser is served by the same rollout-able pods, so it needs the same
+    # transient-failure retry as the document routes.
+    traefik.ingress.kubernetes.io/router.middlewares: "unity-office-unity-office-retry@kubernetescrd"
 
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"

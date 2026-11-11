@@ -133,6 +133,9 @@ ingress:
     nginx.ingress.kubernetes.io/affinity: "cookie"
     nginx.ingress.kubernetes.io/session-cookie-name: "uoffice_route"
     nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
+  staticAnnotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
+    traefik.ingress.kubernetes.io/router.middlewares: "unity-office-unity-office-retry@kubernetescrd"
   hosts:
     web:
       host: "office.unity-workspace.com"

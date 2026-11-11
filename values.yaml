@@ -180,6 +180,8 @@ uoffice:
 
 # ------------------------------------------------------------------------------
 # 3. WOPI Storage Bridge
+#    Two replicas share a ReadWriteMany drafts volume so deployments do not
+#    interrupt saves (see values-prod.yaml).
 # ------------------------------------------------------------------------------
 wopi:
   enabled: true

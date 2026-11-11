@@ -9,17 +9,17 @@ web:
     tag: "6a1f5e22"
     pullPolicy: Always
   annotations: {}
-  replicaCount: 3
+  replicaCount: 2
   autoscaling:
     enabled: true
-    minReplicas: 3
+    minReplicas: 2
     maxReplicas: 15
     targetCPUUtilizationPercentage: 70
     targetMemoryUtilizationPercentage: 75
 
   podDisruptionBudget:
     enabled: true
-    minAvailable: 2
+    minAvailable: 1
 
   resources:
     limits:
@@ -64,7 +64,9 @@ uoffice:
       memory: 2048Mi
 
 render:
-  enabled: true
+  # Template previews are already cached on the PVC; 0 render requests in 24h.
+  # Previews fall back to the Collabora convert-to-PDF chain when disabled.
+  enabled: false
   replicaCount: 2
   image:
     tag: "75c507d8"

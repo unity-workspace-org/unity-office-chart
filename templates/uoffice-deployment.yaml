@@ -26,6 +26,7 @@ spec:
         {{- include "unity-office.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: uoffice
     spec:
+      terminationGracePeriodSeconds: 60
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -82,6 +83,10 @@ spec:
               port: collabora
             initialDelaySeconds: 15
             periodSeconds: 10
+            # A busy kit can take >1s to answer; a flappy probe removes the
+            # endpoint and drops live editor WebSockets.
+            timeoutSeconds: 5
+            failureThreshold: 3
           resources:
             {{- toYaml .Values.uoffice.resources | nindent 12 }}
       {{- with .Values.uoffice.nodeSelector }}

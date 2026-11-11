@@ -24,6 +24,7 @@ spec:
         {{- include "unity-office.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: wopi
     spec:
+      terminationGracePeriodSeconds: 30
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}

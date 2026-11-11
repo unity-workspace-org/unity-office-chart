@@ -40,7 +40,7 @@ uoffice:
   maxConcurrency: 8
   image:
     # Bumped to the built commit SHA by the unity-office-server CI pipeline.
-    tag: "5a21da2a"
+    tag: "49687a46"
     # Always pull the rebuilt overlay image so CSP/config fixes reach the cluster.
     pullPolicy: Always
   affinity:

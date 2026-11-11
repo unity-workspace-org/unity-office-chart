@@ -8,6 +8,12 @@ metadata:
     app.kubernetes.io/component: wopi
 spec:
   type: {{ .Values.wopi.service.type }}
+  # Collabora calls the bridge server-to-server; stick each uoffice pod to one
+  # bridge pod so its in-memory file registry stays warm.
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
   ports:
     - port: {{ .Values.wopi.service.port }}
       targetPort: wopi

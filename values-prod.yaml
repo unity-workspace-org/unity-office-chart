@@ -96,12 +96,18 @@ render:
             topologyKey: kubernetes.io/hostname
 
 wopi:
+  # Two replicas on a shared RWX draft volume: a deploy no longer takes the
+  # bridge offline, so a save is never routed to a terminated pod.
+  replicaCount: 2
   image:
+    # Pinned on purpose: only bump when the bridge itself changes, otherwise
+    # every chart commit restarts it and interrupts saves.
     tag: "c5fc33c2"
     pullPolicy: Always
   annotations: {}
   persistence:
     enabled: true
+    accessMode: ReadWriteMany
     storageClass: "longhorn"
     size: 5Gi
 

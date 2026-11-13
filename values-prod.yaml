@@ -6,7 +6,7 @@ web:
   # "iframe" = legacy embedded editor, "direct" = top-level Collabora editor.
   editorMode: "direct"
   image:
-    tag: "b621f1fa"
+    tag: "972ca06"
     pullPolicy: Always
   annotations: {}
   replicaCount: 2
@@ -102,7 +102,7 @@ wopi:
   image:
     # Pinned on purpose: only bump when the bridge itself changes, otherwise
     # every chart commit restarts it and interrupts saves.
-    tag: "380bebf6"
+    tag: "18008c3"
     pullPolicy: Always
   annotations: {}
   persistence:

@@ -64,9 +64,10 @@ uoffice:
       memory: 2048Mi
 
 render:
-  # Template previews are already cached on the PVC; 0 render requests in 24h.
-  # Previews fall back to the Collabora convert-to-PDF chain when disabled.
-  enabled: false
+  # Render the real first page/slide from the saved document so recent-file
+  # cards reflect the user's edits (DOCX/ODG especially have no other real
+  # renderer). The web save path renders only the cover (maxPages=1).
+  enabled: true
   replicaCount: 2
   image:
     tag: "380bebf6"

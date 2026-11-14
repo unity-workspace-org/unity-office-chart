@@ -81,6 +81,13 @@ spec:
             {{- end }}
             - name: COLLABORA_CONVERT_URL
               value: "http://{{ include "unity-office.fullname" . }}-uoffice:9980/cool/convert-to/png"
+            {{- if .Values.render.enabled }}
+            # Render the real cover for recent-file cards. Collabora saves go
+            # directly to this bridge, so the bridge is the only component that
+            # can keep the card preview in sync with edits.
+            - name: WOPI_RENDER_SERVICE_URL
+              value: "http://{{ include "unity-office.fullname" . }}-render:{{ .Values.render.service.port }}"
+            {{- end }}
             - name: WOPI_FONT_BASE_URL
               value: "https://{{ .Values.ingress.hosts.web.host }}"
             - name: WOPI_ALLOWED_ORIGINS

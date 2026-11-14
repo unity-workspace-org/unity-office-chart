@@ -144,6 +144,17 @@ spec:
           port: 9980
         - protocol: TCP
           port: 443
+    {{- if .Values.render.enabled }}
+    # WOPI renders the real cover for recent-file cards.
+    - to:
+        - podSelector:
+            matchLabels:
+              {{- include "unity-office.selectorLabels" . | nindent 14 }}
+              app.kubernetes.io/component: render
+      ports:
+        - protocol: TCP
+          port: {{ .Values.render.service.port }}
+    {{- end }}
 {{- if .Values.render.enabled }}
 ---
 # 4. Hardened Internal Network Policy for the Template Render Service
@@ -163,12 +174,16 @@ spec:
     - Ingress
     - Egress
   ingress:
-    # Only the web portal may submit documents for rendering
+    # Web and WOPI may submit documents for rendering.
     - from:
         - podSelector:
             matchLabels:
               {{- include "unity-office.selectorLabels" . | nindent 14 }}
               app.kubernetes.io/component: web
+        - podSelector:
+            matchLabels:
+              {{- include "unity-office.selectorLabels" . | nindent 14 }}
+              app.kubernetes.io/component: wopi
       ports:
         - protocol: TCP
           port: {{ .Values.render.service.port }}

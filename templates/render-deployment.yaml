@@ -93,12 +93,27 @@ spec:
           volumeMounts:
             - name: scratch
               mountPath: /tmp/unity-render
+            {{- if .Values.wopi.persistence.enabled }}
+            # Fonts uploaded through the WOPI font API live on the shared
+            # wopi-data volume. Mount them where fontconfig scans so previews
+            # use the same custom faces as the editor.
+            - name: fonts
+              mountPath: /usr/share/fonts/truetype/unity-office-custom
+              subPath: fonts
+              readOnly: true
+            {{- end }}
       volumes:
         - name: scratch
           emptyDir:
             {{- if .Values.render.tmpDirSizeLimit }}
             sizeLimit: {{ .Values.render.tmpDirSizeLimit }}
             {{- end }}
+        {{- if .Values.wopi.persistence.enabled }}
+        - name: fonts
+          persistentVolumeClaim:
+            claimName: {{ include "unity-office.fullname" . }}-wopi-data
+            readOnly: true
+        {{- end }}
       {{- with .Values.render.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

@@ -57,15 +57,12 @@ web:
   service:
     type: ClusterIP
     port: 3000
-    # Sticky sessions keep a browser on one web replica. This complements the
-    # database-backed refresh grace cache by avoiding most cross-pod token
-    # rotation races.
-    annotations:
-      traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
-      traefik.ingress.kubernetes.io/service.sticky.cookie.name: "office_web_route"
-      traefik.ingress.kubernetes.io/service.sticky.cookie.secure: "true"
-      traefik.ingress.kubernetes.io/service.sticky.cookie.samesite: "lax"
-      traefik.ingress.kubernetes.io/service.sticky.cookie.httponly: "true"
+    # The web app is stateless (sessions are database-backed). Sticky cookies
+    # pinned a browser to one web pod, so a rollout or HPA scale-down could
+    # leave the client on a terminated pod and Traefik would return 502 until
+    # the cookie was cleared. Keep stickiness only on the uoffice service,
+    # where Collabora document sessions require it.
+    annotations: {}
 
   # Shared read-write cache for template previews/thumbnails. Every web replica
   # sees the same rendered pages, so a template is rendered once instead of once

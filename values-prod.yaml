@@ -6,7 +6,7 @@ web:
   # "iframe" = legacy embedded editor, "direct" = top-level Collabora editor.
   editorMode: "direct"
   image:
-    tag: "aa980270"
+    tag: "5f240bed"
     pullPolicy: Always
   annotations: {}
   replicaCount: 2

@@ -40,7 +40,7 @@ uoffice:
   maxConcurrency: 8
   image:
     # Bumped to the built commit SHA by the unity-office-server CI pipeline.
-    tag: "e9fd475d"
+    tag: "a8f472a6"
     # Always pull the rebuilt overlay image so CSP/config fixes reach the cluster.
     pullPolicy: Always
   affinity:
@@ -70,7 +70,7 @@ render:
   enabled: true
   replicaCount: 2
   image:
-    tag: "e9fd475d"
+    tag: "a8f472a6"
     pullPolicy: Always
   # Keep the renderer on node1 as requested. The image and scratch volume are
   # node-local, and rendering is CPU-heavy.
@@ -103,7 +103,7 @@ wopi:
   image:
     # Pinned on purpose: only bump when the bridge itself changes, otherwise
     # every chart commit restarts it and interrupts saves.
-    tag: "e9fd475d"
+    tag: "a8f472a6"
     pullPolicy: Always
   annotations: {}
   persistence:
